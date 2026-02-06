@@ -6,15 +6,31 @@ Bạn hoàn toàn có thể chạy Supabase cục bộ trên máy tính của m�
 - **Docker Desktop**: Cần được cài đặt và đang chạy ([Tải tại đây](https://www.docker.com/products/docker-desktop/)).
 - **Supabase CLI**: Công cụ dòng lệnh của Supabase.
 
-### Cài đặt Supabase CLI (Windows - PowerShell)
+### Cài đặt Supabase CLI
+
+#### Windows (Sử dụng Scoop - Khuyên dùng)
 ```powershell
 scoop bucket add supabase https://github.com/supabase/scoop-bucket.git
 scoop install supabase
 ```
-*Hoặc cài đặt qua NPM:*
+
+#### macOS (Sử dụng Homebrew)
+```bash
+brew install supabase/tap/supabase
+```
+
+#### Linux (Sử dụng NPM - Toàn hệ thống)
 ```bash
 npm install supabase --save-dev
 ```
+*Hoặc cài đặt global:*
+```bash
+npm install -g supabase
+```
+
+#### Cài đặt thủ công (Binary)
+Bạn có thể tải trực tiếp file thực thi từ trang [Releases của Supabase CLI](https://github.com/supabase/cli/releases).
+
 
 ## 2. Khởi tạo Local Project
 1. Mở Terminal tại thư mục gốc dự án (`quiz/`).

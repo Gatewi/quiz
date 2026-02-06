@@ -50,7 +50,10 @@ const Login: React.FC = () => {
                     </label>
                     <button
                         className="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 bg-primary hover:bg-blue-600 text-white text-base font-bold leading-normal tracking-[0.015em] transition-all shadow-lg shadow-blue-900/20 active:scale-[0.98]"
-                        onClick={() => navigate('/')}
+                        onClick={() => {
+                            sessionStorage.setItem('show_welcome', 'true');
+                            navigate('/');
+                        }}
                     >
                         <span className="truncate">Đăng nhập</span>
                     </button>

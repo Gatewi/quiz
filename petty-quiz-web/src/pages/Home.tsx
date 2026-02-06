@@ -24,8 +24,12 @@ const Home: React.FC = () => {
 
     // Check for user message on "login"
     useEffect(() => {
-        if (mockUserProfile.user_msg) {
-            const timer = setTimeout(() => setShowWelcomeMsg(true), 100);
+        const shouldShow = sessionStorage.getItem('show_welcome') === 'true';
+        if (shouldShow && mockUserProfile.user_msg) {
+            const timer = setTimeout(() => {
+                setShowWelcomeMsg(true);
+                sessionStorage.removeItem('show_welcome');
+            }, 100);
             return () => clearTimeout(timer);
         }
     }, []);

@@ -1,13 +1,12 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuiz } from '../context/QuizContext';
-import { mockGrades, mockSubjects, mockLessons, mockUserProfile } from '../data/mock';
+import { mockUserProfile } from '../data/mock';
 import type { GradeId, SubjectId } from '../types';
 
 const Home: React.FC = () => {
     const navigate = useNavigate();
-    const { startQuiz } = useQuiz();
+    const { startQuiz, grades, subjects, lessons, isLoading } = useQuiz();
 
     // States aligned with new schema
     const [selectedGradeId, setSelectedGradeId] = useState<GradeId | ''>('');
@@ -16,8 +15,8 @@ const Home: React.FC = () => {
     const [selectedLessonIds, setSelectedLessonIds] = useState<string[]>([]);
     const [showWelcomeMsg, setShowWelcomeMsg] = useState(false);
 
-    // Filtered lessons based on grade and subject
-    const filteredLessons = mockLessons.filter(lesson =>
+    // Filtered lessons based on grade and subject from Context
+    const filteredLessons = lessons.filter(lesson =>
         (selectedGradeId === '' || lesson.id_grade === selectedGradeId) &&
         (selectedSubjectId === '' || lesson.id_subject === selectedSubjectId)
     );
@@ -37,7 +36,7 @@ const Home: React.FC = () => {
     const lessonsCount = selectedLessonIds.length;
     const quantity = parseInt(selectedQuantity) || 0;
     const time = Math.round(quantity * 0.5);
-    const isCreateEnabled = selectedGradeId !== '' && selectedSubjectId !== '' && selectedQuantity !== '' && lessonsCount > 0;
+    const isCreateEnabled = selectedGradeId !== '' && selectedSubjectId !== '' && selectedQuantity !== '' && lessonsCount > 0 && !isLoading;
 
     const handleToggleLesson = (id: string) => {
         setSelectedLessonIds(prev =>
@@ -53,10 +52,10 @@ const Home: React.FC = () => {
         }
     };
 
-    const handleCreateQuiz = () => {
+    const handleCreateQuiz = async () => {
         if (!isCreateEnabled) return;
 
-        startQuiz({
+        await startQuiz({
             id_grade: selectedGradeId as GradeId,
             id_subject: selectedSubjectId as SubjectId,
             lesson_ids: selectedLessonIds,
@@ -65,8 +64,19 @@ const Home: React.FC = () => {
         navigate('/exam');
     };
 
-    const currentGrade = mockGrades.find(g => g.id_grade === selectedGradeId);
-    const currentSubject = mockSubjects.find(s => s.id_subject === selectedSubjectId);
+    const currentGrade = grades.find(g => g.id_grade === selectedGradeId);
+    const currentSubject = subjects.find(s => s.id_subject === selectedSubjectId);
+
+    if (isLoading && grades.length === 0) {
+        return (
+            <div className="flex-1 flex items-center justify-center">
+                <div className="flex flex-col items-center gap-4">
+                    <div className="animate-spin size-12 border-4 border-primary border-t-transparent rounded-full"></div>
+                    <p className="text-text-secondary animate-pulse">Đang kết nối hệ thống...</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="flex-1 w-full max-w-7xl mx-auto px-6 py-8 flex flex-col gap-8 relative">
@@ -112,7 +122,7 @@ const Home: React.FC = () => {
                         }}
                     >
                         <option value="">Chọn trình độ</option>
-                        {mockGrades.map(grade => (
+                        {grades.map(grade => (
                             <option key={grade.id_grade} value={grade.id_grade}>{grade.grade_name}</option>
                         ))}
                     </select>
@@ -130,7 +140,7 @@ const Home: React.FC = () => {
                         }}
                     >
                         <option value="">Chọn môn học</option>
-                        {mockSubjects.map(subject => (
+                        {subjects.map(subject => (
                             <option key={subject.id_subject} value={subject.id_subject}>{subject.subject_name}</option>
                         ))}
                     </select>
@@ -182,7 +192,7 @@ const Home: React.FC = () => {
                                         />
                                         <div className="flex flex-col">
                                             <span className="text-sm font-medium text-white group-hover:text-primary transition-colors">{lesson.lesson_name}</span>
-                                            <span className="text-xs text-text-secondary">{lesson.lesson_type1 || 'Đã học 10%'}</span>
+                                            <span className="text-xs text-text-secondary">{lesson.lesson_type1 || 'Chương trình học'}</span>
                                         </div>
                                     </label>
                                 ))}
@@ -203,8 +213,14 @@ const Home: React.FC = () => {
                             disabled={!isCreateEnabled}
                             onClick={handleCreateQuiz}
                         >
-                            <span>Tạo bài kiểm tra</span>
-                            <span className="material-symbols-outlined">arrow_forward</span>
+                            {isLoading ? (
+                                <div className="animate-spin size-6 border-2 border-white border-t-transparent rounded-full"></div>
+                            ) : (
+                                <>
+                                    <span>Tạo bài kiểm tra</span>
+                                    <span className="material-symbols-outlined">arrow_forward</span>
+                                </>
+                            )}
                         </button>
                         <div className="w-full h-px bg-border-dark my-1"></div>
                         <div className="flex flex-col gap-4 w-full">
@@ -249,3 +265,4 @@ const Home: React.FC = () => {
 };
 
 export default Home;
+

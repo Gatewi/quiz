@@ -1,8 +1,6 @@
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuiz } from '../context/QuizContext';
-import { mockQuestions } from '../data/mock';
 
 const ExamInterface: React.FC = () => {
     const navigate = useNavigate();
@@ -16,7 +14,8 @@ const ExamInterface: React.FC = () => {
         prevQuestion,
         decrementHints,
         finishQuiz,
-        isFinished
+        isFinished,
+        questions
     } = useQuiz();
 
     const [showHintModal, setShowHintModal] = useState(false);
@@ -34,9 +33,8 @@ const ExamInterface: React.FC = () => {
         }
     }, [isFinished, navigate]);
 
-    if (!session) return null;
+    if (!session || questions.length === 0) return null;
 
-    const questions = mockQuestions.slice(0, session.total_questions);
     const currentQ = questions[currentQuestionIndex];
 
     const formatTime = (seconds: number) => {
@@ -55,7 +53,7 @@ const ExamInterface: React.FC = () => {
     };
 
     // Get answer content based on option ID (original 1, 2, 3, 4)
-    const getAnswerContent = (q: typeof currentQ, id: string) => {
+    const getAnswerContent = (q: any, id: string) => {
         if (id === '1') return q.answer_1;
         if (id === '2') return q.answer_2;
         if (id === '3') return q.answer_3;
@@ -216,3 +214,4 @@ const ExamInterface: React.FC = () => {
 };
 
 export default ExamInterface;
+

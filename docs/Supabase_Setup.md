@@ -34,8 +34,8 @@ npm install @supabase/supabase-js
 ### Bước 2: Cấu hình biến môi trường
 Tạo tệp `.env` trong thư mục `petty-quiz-web/` (nếu chưa có) và thêm các thông tin từ mục **Project Settings** -> **API**:
 ```env
-VITE_SUPABASE_URL=https://your-project-id.supabase.co
-VITE_SUPABASE_ANON_KEY=your-anon-public-key
+VITE_SUPABASE_URL=https://ukdcmhfnabmpwdwybzkf.supabase.co
+VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVrZGNtaGZuYWJtcHdkd3liemtmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAzNTk2ODgsImV4cCI6MjA4NTkzNTY4OH0.UQvkpst4n6kEsJJTIXG54oIl10RJTvhb06_aQDmq-b0
 ```
 
 ### Bước 3: Khởi tạo Client

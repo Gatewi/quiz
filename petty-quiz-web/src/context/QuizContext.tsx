@@ -1,21 +1,26 @@
-
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import type { QuizSession, QuizSettings } from '../types';
-import { mockQuestions } from '../data/mock';
+import type { QuizSession, QuizSettings, Grade, Subject, Lesson, Question } from '../types';
+import { supabase } from '../utils/supabase';
 import { shuffleArray } from '../utils/shuffle';
 
 interface QuizContextType {
     session: QuizSession | null;
-    answers: Record<string, string>; // questionId -> optionId ("1", "2", "3", "4")
+    answers: Record<string, string>;
     currentQuestionIndex: number;
     timeLeft: number;
-    startQuiz: (settings: QuizSettings) => void;
+    startQuiz: (settings: QuizSettings) => Promise<void>;
     submitAnswer: (questionId: string, optionId: string) => void;
     nextQuestion: () => void;
     prevQuestion: () => void;
     decrementHints: () => void;
     finishQuiz: () => void;
     isFinished: boolean;
+    // Dynamic Data
+    grades: Grade[];
+    subjects: Subject[];
+    lessons: Lesson[];
+    questions: Question[]; // Session questions
+    isLoading: boolean;
 }
 
 const QuizContext = createContext<QuizContextType | undefined>(undefined);
@@ -27,12 +32,43 @@ export const QuizProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const [timeLeft, setTimeLeft] = useState(0);
     const [isFinished, setIsFinished] = useState(false);
 
+    // Dynamic Data States
+    const [grades, setGrades] = useState<Grade[]>([]);
+    const [subjects, setSubjects] = useState<Subject[]>([]);
+    const [lessons, setLessons] = useState<Lesson[]>([]);
+    const [questions, setQuestions] = useState<Question[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    // Fetch initial data
+    useEffect(() => {
+        const fetchInitialData = async () => {
+            setIsLoading(true);
+            try {
+                const [gradesRes, subjectsRes, lessonsRes] = await Promise.all([
+                    supabase.from('grades').select('*'),
+                    supabase.from('subjects').select('*'),
+                    supabase.from('lessons').select('*')
+                ]);
+
+                if (gradesRes.data) setGrades(gradesRes.data);
+                if (subjectsRes.data) setSubjects(subjectsRes.data);
+                if (lessonsRes.data) setLessons(lessonsRes.data);
+            } catch (error) {
+                console.error('Error fetching initial data:', error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchInitialData();
+    }, []);
+
     const finishQuiz = useCallback(() => {
         if (!session) return;
 
         let correct = 0;
         Object.entries(answers).forEach(([qId, selectedOption]) => {
-            const q = mockQuestions.find(mq => mq.id_question === qId);
+            const q = questions.find(mq => mq.id_question === qId);
             if (q) {
                 const correctOptions = q.correst_ans.split(',').map(s => s.trim());
                 if (correctOptions.includes(selectedOption)) {
@@ -48,7 +84,7 @@ export const QuizProvider: React.FC<{ children: React.ReactNode }> = ({ children
             completed_at: new Date().toISOString()
         } : null);
         setIsFinished(true);
-    }, [session, answers]);
+    }, [session, answers, questions]);
 
     // Timer logic
     useEffect(() => {
@@ -63,40 +99,56 @@ export const QuizProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
     }, [session, timeLeft, finishQuiz]);
 
-    const startQuiz = (settings: QuizSettings) => {
-        const totalQ = settings.question_count;
-        const initialHints = Math.floor(totalQ / 10);
+    const startQuiz = async (settings: QuizSettings) => {
+        setIsLoading(true);
+        try {
+            const { data: fetchedQuestions, error } = await supabase
+                .from('questions')
+                .select('*')
+                .in('id_lesson', settings.lesson_ids)
+                .limit(settings.question_count);
 
-        // Prepare shuffled options for each question
-        const filteredQuestions = mockQuestions.filter(q =>
-            settings.lesson_ids.includes(q.id_lesson)
-        ).slice(0, totalQ);
+            if (error) throw error;
+            if (!fetchedQuestions || fetchedQuestions.length === 0) {
+                alert('Không tìm thấy câu hỏi cho các bài học đã chọn.');
+                return;
+            }
 
-        const shuffledMap: Record<string, string[]> = {};
-        filteredQuestions.forEach(q => {
-            shuffledMap[q.id_question] = shuffleArray(['1', '2', '3', '4']);
-        });
+            const totalQ = fetchedQuestions.length;
+            const initialHints = Math.floor(totalQ / 10) || 1;
 
-        const newSession: QuizSession = {
-            id: Math.random().toString(36).substr(2, 9),
-            id_user: 'mock-user',
-            total_questions: totalQ,
-            correct_answers: 0,
-            time_elapsed_seconds: 0,
-            remaining_hints: initialHints,
-            last_question_index: 0,
-            status: 'in-progress',
-            expiration_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-            quiz_settings: settings,
-            started_at: new Date().toISOString(),
-            shuffled_options: shuffledMap
-        };
+            const shuffledMap: Record<string, string[]> = {};
+            (fetchedQuestions as Question[]).forEach((q: Question) => {
+                shuffledMap[q.id_question] = shuffleArray(['1', '2', '3', '4']);
+            });
 
-        setSession(newSession);
-        setAnswers({});
-        setCurrentQuestionIndex(0);
-        setTimeLeft(totalQ * 30);
-        setIsFinished(false);
+            const newSession: QuizSession = {
+                id: Math.random().toString(36).substr(2, 9),
+                id_user: 'mock-user',
+                total_questions: totalQ,
+                correct_answers: 0,
+                time_elapsed_seconds: 0,
+                remaining_hints: initialHints,
+                last_question_index: 0,
+                status: 'in-progress',
+                expiration_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+                quiz_settings: settings,
+                started_at: new Date().toISOString(),
+                shuffled_options: shuffledMap
+            };
+
+            setQuestions(fetchedQuestions);
+            setSession(newSession);
+            setAnswers({});
+            setCurrentQuestionIndex(0);
+            setTimeLeft(totalQ * 60); // 60s per question
+            setIsFinished(false);
+        } catch (error) {
+            console.error('Error starting quiz:', error);
+            alert('Có lỗi xảy ra khi tải câu hỏi.');
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     const submitAnswer = (questionId: string, optionId: string) => {
@@ -133,7 +185,12 @@ export const QuizProvider: React.FC<{ children: React.ReactNode }> = ({ children
             prevQuestion,
             decrementHints,
             finishQuiz,
-            isFinished
+            isFinished,
+            grades,
+            subjects,
+            lessons,
+            questions,
+            isLoading
         }}>
             {children}
         </QuizContext.Provider>

@@ -2,11 +2,12 @@
 
 Tài liệu này hướng dẫn bạn cách khởi tạo Database trên Supabase và kết nối với ứng dụng PettyQuizWeb.
 
-## 1. Tạo Project trên Supabase
-1. Truy cập [supabase.com](https://supabase.com/) và đăng nhập.
-2. Nhấn **New Project**.
-3. Chọn Organization, đặt tên cho Project (ví dụ: `PettyQuiz`), nhập mật khẩu cho Database và chọn vùng (Region) gần bạn nhất.
-4. Chờ vài phút để Supabase khởi tạo hạ tầng.
+## 1. Lựa chọn môi trường phát triển
+Bạn có thể chọn một trong hai cách sau:
+- **Cloud (Khuyên dùng)**: Dễ thiết lập, truy cập được từ mọi nơi. Xem hướng dẫn bên dưới.
+- **Local (Docker)**: Chạy trên máy cá nhân, nhanh và offline. Xem [Hướng dẫn Supabase Local](file:///c:/setup/Antigravity/quiz/docs/Local_Supabase_Setup.md).
+
+## 2. Tạo Project trên Supabase Cloud
 
 ## 2. Khởi tạo Database Schema
 1. Trong Dashboard Supabase, chọn mục **SQL Editor** (icon `>_` ở thanh bên trái).

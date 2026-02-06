@@ -21,6 +21,10 @@ const Home: React.FC = () => {
         (selectedSubjectId === '' || lesson.id_subject === selectedSubjectId)
     );
 
+    // Calculate active IDs based on actual lesson content
+    const activeGradeIds = new Set(lessons.map(l => l.id_grade));
+    const activeSubjectIds = new Set(lessons.map(l => l.id_subject));
+
     // Check for user message on "login"
     useEffect(() => {
         const shouldShow = sessionStorage.getItem('show_welcome') === 'true';
@@ -122,7 +126,7 @@ const Home: React.FC = () => {
                         }}
                     >
                         <option value="">Chọn trình độ</option>
-                        {grades.map(grade => (
+                        {grades.filter(g => activeGradeIds.has(g.id_grade)).map(grade => (
                             <option key={grade.id_grade} value={grade.id_grade}>{grade.grade_name}</option>
                         ))}
                     </select>
@@ -140,7 +144,7 @@ const Home: React.FC = () => {
                         }}
                     >
                         <option value="">Chọn môn học</option>
-                        {subjects.map(subject => (
+                        {subjects.filter(s => activeSubjectIds.has(s.id_subject)).map(subject => (
                             <option key={subject.id_subject} value={subject.id_subject}>{subject.subject_name}</option>
                         ))}
                     </select>

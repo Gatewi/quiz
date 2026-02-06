@@ -63,27 +63,55 @@ export const QuizProvider: React.FC<{ children: React.ReactNode }> = ({ children
         fetchInitialData();
     }, []);
 
-    const finishQuiz = useCallback(() => {
+    const finishQuiz = useCallback(async () => {
         if (!session) return;
+        setIsLoading(true);
 
-        let correct = 0;
-        Object.entries(answers).forEach(([qId, selectedOption]) => {
-            const q = questions.find(mq => mq.id_question === qId);
-            if (q) {
-                const correctOptions = q.correst_ans.split(',').map(s => s.trim());
-                if (correctOptions.includes(selectedOption)) {
-                    correct++;
+        try {
+            let correct = 0;
+            Object.entries(answers).forEach(([qId, selectedOption]) => {
+                const q = questions.find(mq => mq.id_question === qId);
+                if (q) {
+                    const correctOptions = q.correst_ans.split(',').map(s => s.trim());
+                    if (correctOptions.includes(selectedOption)) {
+                        correct++;
+                    }
                 }
-            }
-        });
+            });
 
-        setSession(prev => prev ? {
-            ...prev,
-            status: 'completed',
-            correct_answers: correct,
-            completed_at: new Date().toISOString()
-        } : null);
-        setIsFinished(true);
+            const completedSession: QuizSession = {
+                ...session,
+                status: 'completed',
+                correct_answers: correct,
+                completed_at: new Date().toISOString()
+            };
+
+            // Save to Supabase
+            const { error } = await supabase
+                .from('quiz_sessions')
+                .upsert({
+                    id: session.id,
+                    id_user: session.id_user,
+                    total_questions: session.total_questions,
+                    correct_answers: correct,
+                    time_elapsed_seconds: session.time_elapsed_seconds,
+                    remaining_hints: session.remaining_hints,
+                    status: 'completed',
+                    quiz_settings: session.quiz_settings,
+                    shuffled_options: session.shuffled_options,
+                    completed_at: completedSession.completed_at
+                });
+
+            if (error) throw error;
+
+            setSession(completedSession);
+            setIsFinished(true);
+        } catch (error) {
+            console.error('Error finishing quiz:', error);
+            alert('Có lỗi xảy ra khi lưu kết quả bài thi.');
+        } finally {
+            setIsLoading(false);
+        }
     }, [session, answers, questions]);
 
     // Timer logic

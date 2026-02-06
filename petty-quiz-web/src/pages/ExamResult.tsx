@@ -1,14 +1,12 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useQuiz } from '../context/QuizContext';
-import { mockQuestions } from '../data/mock';
 import type { Question } from '../types';
 
 const ExamResult: React.FC = () => {
-    const { session, answers } = useQuiz();
+    const { session, answers, questions } = useQuiz();
 
-    if (!session || session.status !== 'completed') {
+    if (!session || session.status !== 'completed' || questions.length === 0) {
         return (
             <div className="bg-background-light dark:bg-background-dark text-[#111318] dark:text-white min-h-screen flex flex-col items-center justify-center font-display">
                 <p className="text-xl">Không tìm thấy kết quả bài thi.</p>
@@ -19,7 +17,7 @@ const ExamResult: React.FC = () => {
 
     const percentage = Math.round((session.correct_answers / session.total_questions) * 100);
 
-    const getAnswerContent = (q: Question, optionId: string) => {
+    const getAnswerContent = (q: any, optionId: string) => {
         if (optionId === '1') return q.answer_1;
         if (optionId === '2') return q.answer_2;
         if (optionId === '3') return q.answer_3;
@@ -29,7 +27,7 @@ const ExamResult: React.FC = () => {
 
     // Find wrong answers
     const results = Object.entries(answers).map(([qId, oId]) => {
-        const q = mockQuestions.find(mq => mq.id_question === qId);
+        const q = questions.find(mq => mq.id_question === qId);
         if (!q) return null;
 
         const correctOptions = q.correst_ans.split(',').map(s => s.trim());
@@ -61,9 +59,6 @@ const ExamResult: React.FC = () => {
                         <Link className="text-sm font-medium leading-normal hover:text-primary transition-colors" to="/">Trang chủ</Link>
                         <Link className="text-sm font-medium leading-normal hover:text-primary transition-colors" to="/report">Báo cáo</Link>
                     </nav>
-                    <button className="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary hover:bg-primary-hover transition-colors text-white text-sm font-bold leading-normal tracking-[0.015em]">
-                        <span className="truncate">Tài khoản</span>
-                    </button>
                 </div>
             </header>
             <main className="flex-1 flex flex-col items-center w-full px-4 py-8 md:py-12">
@@ -71,7 +66,7 @@ const ExamResult: React.FC = () => {
                     <div className="flex flex-col items-center gap-6 animate-fade-in">
                         <div className="flex flex-col items-center gap-2 text-center">
                             <h1 className="text-[#111318] dark:text-white text-3xl md:text-4xl font-bold leading-tight">Kết quả bài thi</h1>
-                            <p className="text-[#637588] dark:text-[#9da6b9] text-lg">Hoàn thành lúc {new Date(session.completed_at!).toLocaleTimeString()}, {new Date(session.completed_at!).toLocaleDateString()}</p>
+                            <p className="text-[#637588] dark:text-[#9da6b9] text-lg">Hoàn thành lúc {session.completed_at ? new Date(session.completed_at).toLocaleTimeString() : ''}, {session.completed_at ? new Date(session.completed_at).toLocaleDateString() : ''}</p>
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
                             <div className="flex flex-col gap-4 p-8 rounded-xl bg-white dark:bg-surface-dark border border-[#e5e7eb] dark:border-transparent items-center justify-center text-center h-full shadow-sm hover:shadow-md transition-shadow">

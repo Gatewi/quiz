@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="vi">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Giao diện Làm bài thi - PettyQuizWeb</title>
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect" />
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&amp;display=swap"
+    rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+    rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+    rel="stylesheet" />
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <!-- Theme Configuration -->
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#135bec",
+            "primary-hover": "#1d64f2",
+            "background-light": "#f6f6f8",
+            "background-dark": "#111318",
+            "surface-dark": "#1d212b",
+            "border-dark": "#282e39",
+          },
+          fontFamily: {
+            "display": ["Lexend", "sans-serif"]
+          },
+          borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+        },
+      },
+    }
+  </script>
+  <style>
+    /* Custom radio button styles from component example */
+    .radio-custom {
+      --radio-dot-svg: url('data:image/svg+xml,%3csvg viewBox=%270 0 16 16%27 fill=%27rgb(255,255,255)%27 xmlns=%27http://www.w3.org/2000/svg%27%3e%3ccircle cx=%278%27 cy=%278%27 r=%273%27/%3e%3c/svg%3e');
+    }
+  </style>
+</head>
+
+<body
+  class="bg-background-light dark:bg-background-dark min-h-screen text-slate-900 dark:text-white font-display flex flex-col overflow-x-hidden selection:bg-primary selection:text-white">
+  <!-- Layout Container -->
+  <div class="layout-container flex h-full grow flex-col w-full max-w-[1024px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <!-- Header Area: Subject Tag -->
+    <header class="flex justify-end w-full mb-6">
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-dark border border-border-dark">
+        <span class="material-symbols-outlined text-gray-400 text-lg">school</span>
+        <span class="text-sm font-medium text-gray-300">Tiếng Anh - Trình độ B2</span>
+      </div>
+    </header>
+    <!-- Main Content Area -->
+    <main class="flex-1 flex flex-col gap-8">
+      <!-- Progress Section -->
+      <section class="w-full bg-surface-dark/50 rounded-xl p-5 border border-border-dark backdrop-blur-sm">
+        <div class="flex flex-col gap-3">
+          <div class="flex justify-between items-end text-sm text-gray-400 mb-1">
+            <span class="font-medium text-white">Tiến độ làm bài</span>
+            <span class="font-bold text-primary text-base">28%</span>
+            <div class="flex items-center gap-1">
+              <span class="material-symbols-outlined text-lg">timer</span>
+              <span>00:12:45</span>
+            </div>
+          </div>
+          <!-- Progress Bar -->
+          <div class="h-3 w-full bg-gray-700/50 rounded-full overflow-hidden">
+            <div class="h-full bg-primary rounded-full transition-all duration-500 ease-out relative overflow-hidden"
+              style="width: 28%;">
+              <!-- Shimmer effect overlay -->
+              <div class="absolute inset-0 bg-white/20 w-full -translate-x-full animate-[shimmer_2s_infinite]"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- Question & Answers Container -->
+      <section class="flex flex-col gap-8 max-w-[800px] mx-auto w-full">
+        <!-- Question Header -->
+        <div class="flex flex-col gap-4">
+          <h2 class="text-primary text-lg font-bold tracking-wide uppercase opacity-90">Câu hỏi số 14/50:</h2>
+          <p class="text-white text-2xl sm:text-3xl font-medium leading-tight">
+            Which of the following is a synonym for 'happy' in the context of professional achievement?
+          </p>
+        </div>
+        <!-- Answer Options (Radio List) -->
+        <div class="radio-custom flex flex-col gap-4 mt-2">
+          <!-- Option A -->
+          <label
+            class="group relative flex items-center gap-4 rounded-xl border border-border-dark bg-surface-dark p-5 cursor-pointer transition-all hover:border-primary/50 hover:bg-surface-dark/80 has-[:checked]:border-primary has-[:checked]:bg-primary/10 has-[:checked]:ring-1 has-[:checked]:ring-primary">
+            <div class="flex items-center justify-center shrink-0">
+              <input
+                class="peer h-5 w-5 border-2 border-gray-500 bg-transparent text-transparent checked:border-primary checked:bg-primary checked:bg-[image:--radio-dot-svg] focus:ring-0 focus:ring-offset-0 transition-all"
+                name="question_14" type="radio" />
+            </div>
+            <div class="flex grow flex-col">
+              <span class="text-white text-lg font-normal leading-normal group-hover:text-white transition-colors">A.
+                Content</span>
+            </div>
+          </label>
+          <!-- Option B -->
+          <label
+            class="group relative flex items-center gap-4 rounded-xl border border-border-dark bg-surface-dark p-5 cursor-pointer transition-all hover:border-primary/50 hover:bg-surface-dark/80 has-[:checked]:border-primary has-[:checked]:bg-primary/10 has-[:checked]:ring-1 has-[:checked]:ring-primary">
+            <div class="flex items-center justify-center shrink-0">
+              <input checked=""
+                class="peer h-5 w-5 border-2 border-gray-500 bg-transparent text-transparent checked:border-primary checked:bg-primary checked:bg-[image:--radio-dot-svg] focus:ring-0 focus:ring-offset-0 transition-all"
+                name="question_14" type="radio" />
+            </div>
+            <div class="flex grow flex-col">
+              <span class="text-white text-lg font-normal leading-normal group-hover:text-white transition-colors">B.
+                Fulfilled</span>
+            </div>
+          </label>
+          <!-- Option C -->
+          <label
+            class="group relative flex items-center gap-4 rounded-xl border border-border-dark bg-surface-dark p-5 cursor-pointer transition-all hover:border-primary/50 hover:bg-surface-dark/80 has-[:checked]:border-primary has-[:checked]:bg-primary/10 has-[:checked]:ring-1 has-[:checked]:ring-primary">
+            <div class="flex items-center justify-center shrink-0">
+              <input
+                class="peer h-5 w-5 border-2 border-gray-500 bg-transparent text-transparent checked:border-primary checked:bg-primary checked:bg-[image:--radio-dot-svg] focus:ring-0 focus:ring-offset-0 transition-all"
+                name="question_14" type="radio" />
+            </div>
+            <div class="flex grow flex-col">
+              <span class="text-white text-lg font-normal leading-normal group-hover:text-white transition-colors">C.
+                Amused</span>
+            </div>
+          </label>
+          <!-- Option D -->
+          <label
+            class="group relative flex items-center gap-4 rounded-xl border border-border-dark bg-surface-dark p-5 cursor-pointer transition-all hover:border-primary/50 hover:bg-surface-dark/80 has-[:checked]:border-primary has-[:checked]:bg-primary/10 has-[:checked]:ring-1 has-[:checked]:ring-primary">
+            <div class="flex items-center justify-center shrink-0">
+              <input
+                class="peer h-5 w-5 border-2 border-gray-500 bg-transparent text-transparent checked:border-primary checked:bg-primary checked:bg-[image:--radio-dot-svg] focus:ring-0 focus:ring-offset-0 transition-all"
+                name="question_14" type="radio" />
+            </div>
+            <div class="flex grow flex-col">
+              <span class="text-white text-lg font-normal leading-normal group-hover:text-white transition-colors">D.
+                Lucky</span>
+            </div>
+          </label>
+        </div>
+      </section>
+    </main>
+    <!-- Footer Navigation -->
+    <footer class="mt-12 py-6 border-t border-border-dark">
+      <div class="max-w-[800px] mx-auto w-full grid grid-cols-3 items-center gap-4">
+        <!-- Back Button -->
+        <div class="justify-self-start">
+          <button
+            class="flex items-center gap-2 px-6 py-3 rounded-lg text-gray-400 hover:text-white hover:bg-surface-dark transition-colors font-medium">
+            <span class="material-symbols-outlined text-xl">arrow_back</span>
+            <span>Quay lại</span>
+          </button>
+        </div>
+        <!-- Hint Button -->
+        <div class="justify-self-center">
+          <button
+            class="group relative flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg border border-border-dark hover:border-yellow-500/50 hover:bg-yellow-500/10 transition-all">
+            <span class="material-symbols-outlined text-yellow-500 group-hover:animate-pulse">lightbulb</span>
+            <span class="text-gray-300 group-hover:text-yellow-200">Gợi ý</span>
+            <span
+              class="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-surface-dark border border-border-dark text-[10px] font-bold text-gray-400 group-hover:text-yellow-500 group-hover:border-yellow-500/50">{hints}</span>
+          </button>
+        </div>
+        <!-- Next Button -->
+        <div class="justify-self-end">
+          <button
+            class="flex items-center gap-2 px-8 py-3 bg-primary hover:bg-primary-hover text-white font-bold rounded-lg shadow-lg shadow-primary/20 transition-all hover:translate-x-1 active:translate-x-0">
+            <span>Tiếp theo</span>
+            <span class="material-symbols-outlined text-xl">arrow_forward</span>
+          </button>
+        </div>
+      </div>
+    </footer>
+  </div>
+  <!-- Animation Keyframes needed for shimmer -->
+  <style>
+    @keyframes shimmer {
+      100% {
+        transform: translateX(100%);
+      }
+    }
+  </style>
+</body>
+
+</html>

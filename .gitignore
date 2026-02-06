@@ -1,0 +1,23 @@
+# Dependencies
+node_modules
+petty-quiz-web/node_modules
+petty-quiz-web/dist
+petty-quiz-web/dist-ssr
+
+# Environment
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDE
+.vscode
+.idea
+.DS_Store
+
+# Brain/Agent data
+.gemini
+brain
+.agent/
+*.log

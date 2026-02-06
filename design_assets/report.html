@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Báo cáo kết quả học tập - PettyQuiz</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#111318",
+                        "surface-dark": "#1c1f27",
+                        "surface-border": "#3b4354",
+                        "text-secondary": "#9da6b9",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "Noto Sans", "sans-serif"],
+                        "body": ["Noto Sans", "sans-serif"],
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar for dark theme */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #111318; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #3b4354; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4b5563; 
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display overflow-hidden">
+<div class="flex h-screen w-full flex-row">
+<!-- Sidebar -->
+<aside class="hidden lg:flex flex-col w-64 bg-[#111318] border-r border-[#282e39] h-full shrink-0">
+<div class="flex flex-col h-full justify-between p-4">
+<div class="flex flex-col gap-6">
+<!-- User Profile -->
+<div class="flex gap-3 items-center px-2">
+<div class="bg-center bg-no-repeat bg-cover rounded-full size-10 shrink-0 border border-[#3b4354]" data-alt="User avatar with gradient background" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCuNOG0Ij0Tm0DxxrPwBn07mdpIj-IK2BBxjMp8KcLpvRAedW6nrhNRsN5CY753VTAWTtQPLssRgDPfM6Z-M5OAZdc5oFC_PuipOB5Rw5Z7UUgAFBkMwrsYnwF2FwCqDzXzo8pw2aA2UMDC8ZFYvNcaZjkXEuOrJA_BKzO_uW02r6gBvWnaAEsoORBqMXEjVXUgMnv9AAScOkLU0D10oj1nI2vR4S6GeH1Fh3kcbe-K1zvylld98iAYkEGxwR85VQ95FOzF_bI2unnF");'></div>
+<div class="flex flex-col overflow-hidden">
+<h1 class="text-white text-base font-medium leading-normal truncate">Nguyễn Văn A</h1>
+<p class="text-text-secondary text-xs font-normal leading-normal">Học sinh lớp 12A</p>
+</div>
+</div>
+<!-- Navigation -->
+<nav class="flex flex-col gap-2">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-[#282e39] transition-colors group" href="#">
+<span class="material-symbols-outlined text-text-secondary group-hover:text-white" style="font-size: 24px;">home</span>
+<p class="text-text-secondary group-hover:text-white text-sm font-medium leading-normal">Tổng quan</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/10 border border-primary/20" href="#">
+<span class="material-symbols-outlined text-primary" style="font-size: 24px;">bar_chart</span>
+<p class="text-primary text-sm font-medium leading-normal">Báo cáo</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-[#282e39] transition-colors group" href="#">
+<span class="material-symbols-outlined text-text-secondary group-hover:text-white" style="font-size: 24px;">calendar_today</span>
+<p class="text-text-secondary group-hover:text-white text-sm font-medium leading-normal">Lịch thi</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-[#282e39] transition-colors group" href="#">
+<span class="material-symbols-outlined text-text-secondary group-hover:text-white" style="font-size: 24px;">person</span>
+<p class="text-text-secondary group-hover:text-white text-sm font-medium leading-normal">Tài khoản</p>
+</a>
+</nav>
+</div>
+<div class="px-2">
+<p class="text-[#4b5563] text-xs text-center">PettyQuiz Portal v2.0</p>
+</div>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 flex flex-col h-full relative overflow-hidden">
+<!-- Header Section -->
+<header class="w-full bg-[#111318] border-b border-[#282e39] p-6 shrink-0 z-10">
+<div class="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-6">
+<div>
+<h1 class="text-white text-3xl font-black leading-tight tracking-[-0.033em]">Báo cáo kết quả</h1>
+<p class="text-text-secondary text-sm mt-1">Theo dõi tiến độ và lịch sử làm bài của bạn</p>
+</div>
+<div class="flex flex-wrap items-end gap-3 w-full xl:w-auto">
+<!-- Date Pickers -->
+<div class="flex flex-row gap-3 flex-1 xl:flex-none">
+<label class="flex flex-col min-w-[140px] flex-1">
+<span class="text-text-secondary text-xs font-medium pb-1.5">Từ ngày</span>
+<div class="flex w-full items-stretch rounded-lg group">
+<input class="flex w-full min-w-0 flex-1 rounded-l-lg text-white focus:outline-0 focus:ring-1 focus:ring-primary border border-surface-border bg-surface-dark focus:border-primary h-10 px-3 text-sm font-normal" type="text" value="01/10/2023"/>
+<div class="text-text-secondary flex border border-l-0 border-surface-border bg-surface-dark items-center justify-center px-3 rounded-r-lg">
+<span class="material-symbols-outlined text-[18px]">calendar_today</span>
+</div>
+</div>
+</label>
+<label class="flex flex-col min-w-[140px] flex-1">
+<span class="text-text-secondary text-xs font-medium pb-1.5">Đến ngày</span>
+<div class="flex w-full items-stretch rounded-lg group">
+<input class="flex w-full min-w-0 flex-1 rounded-l-lg text-white focus:outline-0 focus:ring-1 focus:ring-primary border border-surface-border bg-surface-dark focus:border-primary h-10 px-3 text-sm font-normal" type="text" value="07/10/2023"/>
+<div class="text-text-secondary flex border border-l-0 border-surface-border bg-surface-dark items-center justify-center px-3 rounded-r-lg">
+<span class="material-symbols-outlined text-[18px]">calendar_today</span>
+</div>
+</div>
+</label>
+</div>
+<!-- Action Buttons -->
+<div class="flex gap-3 mt-4 xl:mt-0 flex-1 xl:flex-none justify-end">
+<button class="flex items-center justify-center rounded-lg h-10 px-5 bg-[#282e39] hover:bg-[#323946] text-white text-sm font-bold tracking-[0.015em] transition-colors whitespace-nowrap">
+                                Trang chủ
+                            </button>
+<button class="flex items-center justify-center rounded-lg h-10 px-5 bg-primary hover:bg-blue-600 text-white text-sm font-bold tracking-[0.015em] shadow-lg shadow-primary/20 transition-all whitespace-nowrap">
+<span class="material-symbols-outlined mr-2 text-[20px]">add_circle</span>
+                                Làm bài thi mới
+                            </button>
+</div>
+</div>
+</div>
+</header>
+<!-- Dashboard Content -->
+<div class="flex-1 overflow-y-auto p-4 lg:p-6 scroll-smooth">
+<div class="grid grid-cols-12 gap-6 max-w-[1600px] mx-auto">
+<!-- LEFT COLUMN: Summary & Chart -->
+<div class="col-span-12 xl:col-span-4 flex flex-col gap-6">
+<!-- Summary Stats -->
+<div class="grid grid-cols-3 gap-3">
+<!-- Stat 1 -->
+<div class="bg-surface-dark border border-surface-border rounded-xl p-4 flex flex-col items-center justify-center text-center">
+<div class="text-text-secondary mb-1" title="Tổng số môn học">
+<span class="material-symbols-outlined text-[24px]">menu_book</span>
+</div>
+<span class="text-2xl font-bold text-white">05</span>
+<span class="text-xs text-text-secondary mt-1">Môn học</span>
+</div>
+<!-- Stat 2 -->
+<div class="bg-surface-dark border border-surface-border rounded-xl p-4 flex flex-col items-center justify-center text-center relative overflow-hidden">
+<div class="absolute inset-0 bg-primary/5"></div>
+<div class="text-primary mb-1" title="Bài thi đã hoàn thành">
+<span class="material-symbols-outlined text-[24px]">check_circle</span>
+</div>
+<span class="text-2xl font-bold text-white">12</span>
+<span class="text-xs text-text-secondary mt-1">Đã xong</span>
+</div>
+<!-- Stat 3 -->
+<div class="bg-surface-dark border border-surface-border rounded-xl p-4 flex flex-col items-center justify-center text-center">
+<div class="text-green-500 mb-1" title="Tỷ lệ trung bình">
+<span class="material-symbols-outlined text-[24px]">trending_up</span>
+</div>
+<span class="text-2xl font-bold text-white">78%</span>
+<span class="text-xs text-text-secondary mt-1">Trung bình</span>
+</div>
+</div>
+<!-- Performance Chart -->
+<div class="bg-surface-dark border border-surface-border rounded-xl p-5 flex flex-col flex-1 min-h-[300px]">
+<h3 class="text-white text-lg font-bold mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">equalizer</span>
+                                Kết quả theo môn
+                            </h3>
+<div class="flex flex-col gap-5 flex-1 justify-center">
+<!-- Bar Item -->
+<div class="flex flex-col gap-2">
+<div class="flex justify-between text-sm">
+<span class="text-white font-medium">Toán học</span>
+<span class="text-text-secondary">92% (24 bài)</span>
+</div>
+<div class="w-full bg-[#111318] rounded-full h-2.5">
+<div class="bg-primary h-2.5 rounded-full" style="width: 92%"></div>
+</div>
+</div>
+<!-- Bar Item -->
+<div class="flex flex-col gap-2">
+<div class="flex justify-between text-sm">
+<span class="text-white font-medium">Tiếng Anh</span>
+<span class="text-text-secondary">85% (10 bài)</span>
+</div>
+<div class="w-full bg-[#111318] rounded-full h-2.5">
+<div class="bg-purple-500 h-2.5 rounded-full" style="width: 85%"></div>
+</div>
+</div>
+<!-- Bar Item -->
+<div class="flex flex-col gap-2">
+<div class="flex justify-between text-sm">
+<span class="text-white font-medium">Vật Lý</span>
+<span class="text-text-secondary">78% (15 bài)</span>
+</div>
+<div class="w-full bg-[#111318] rounded-full h-2.5">
+<div class="bg-teal-500 h-2.5 rounded-full" style="width: 78%"></div>
+</div>
+</div>
+<!-- Bar Item -->
+<div class="flex flex-col gap-2">
+<div class="flex justify-between text-sm">
+<span class="text-white font-medium">Hóa Học</span>
+<span class="text-text-secondary">64% (08 bài)</span>
+</div>
+<div class="w-full bg-[#111318] rounded-full h-2.5">
+<div class="bg-yellow-500 h-2.5 rounded-full" style="width: 64%"></div>
+</div>
+</div>
+<!-- Bar Item -->
+<div class="flex flex-col gap-2">
+<div class="flex justify-between text-sm">
+<span class="text-white font-medium">Sinh Học</span>
+<span class="text-text-secondary">45% (05 bài)</span>
+</div>
+<div class="w-full bg-[#111318] rounded-full h-2.5">
+<div class="bg-red-500 h-2.5 rounded-full" style="width: 45%"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- RIGHT COLUMN: History Table -->
+<div class="col-span-12 xl:col-span-8 flex flex-col h-[600px] xl:h-auto min-h-[500px]">
+<div class="bg-surface-dark border border-surface-border rounded-xl flex flex-col h-full overflow-hidden">
+<!-- Table Header Title -->
+<div class="p-5 border-b border-surface-border flex justify-between items-center bg-[#232730]">
+<h3 class="text-white text-lg font-bold flex items-center gap-2">
+<span class="material-symbols-outlined text-text-secondary">history</span>
+                                    Lịch sử làm bài kiểm tra
+                                </h3>
+<button class="text-text-secondary hover:text-white flex items-center gap-1 text-sm font-medium transition-colors">
+<span class="material-symbols-outlined text-[18px]">filter_list</span>
+                                    Lọc &amp; Sắp xếp
+                                </button>
+</div>
+<!-- Table Container -->
+<div class="flex-1 overflow-auto">
+<table class="w-full text-left border-collapse">
+<thead class="bg-[#1a1d24] sticky top-0 z-10 shadow-sm">
+<tr>
+<th class="p-4 text-xs font-semibold text-text-secondary uppercase tracking-wider w-[25%]">
+<div class="flex items-center gap-1 cursor-pointer hover:text-white">
+                                                    Thời gian
+                                                    <span class="material-symbols-outlined text-[14px]">arrow_downward</span>
+</div>
+</th>
+<th class="p-4 text-xs font-semibold text-text-secondary uppercase tracking-wider w-[25%]">Môn học</th>
+<th class="p-4 text-xs font-semibold text-text-secondary uppercase tracking-wider text-center w-[15%]">Số câu</th>
+<th class="p-4 text-xs font-semibold text-text-secondary uppercase tracking-wider text-center w-[15%]">Kết quả</th>
+<th class="p-4 text-xs font-semibold text-text-secondary uppercase tracking-wider text-right w-[20%]">Chi tiết</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-border">
+<!-- Row 1 -->
+<tr class="hover:bg-[#282e39]/50 transition-colors group">
+<td class="p-4">
+<div class="flex flex-col">
+<span class="text-white text-sm font-medium">10:30 AM</span>
+<span class="text-text-secondary text-xs">07/10/2023</span>
+</div>
+</td>
+<td class="p-4">
+<div class="flex items-center gap-2">
+<div class="size-2 rounded-full bg-blue-500"></div>
+<span class="text-white text-sm">Toán Logic - Đề số 05</span>
+</div>
+</td>
+<td class="p-4 text-center">
+<span class="text-text-secondary text-sm">20</span>
+</td>
+<td class="p-4 text-center">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-500/10 text-green-400">
+                                                    90%
+                                                </span>
+</td>
+<td class="p-4 text-right">
+<a class="text-primary hover:text-blue-400 text-sm font-medium inline-flex items-center gap-1 opacity-80 group-hover:opacity-100 transition-opacity" href="#">
+                                                    Xem câu sai 
+                                                    <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</a>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-[#282e39]/50 transition-colors group">
+<td class="p-4">
+<div class="flex flex-col">
+<span class="text-white text-sm font-medium">09:15 AM</span>
+<span class="text-text-secondary text-xs">06/10/2023</span>
+</div>
+</td>
+<td class="p-4">
+<div class="flex items-center gap-2">
+<div class="size-2 rounded-full bg-purple-500"></div>
+<span class="text-white text-sm">Tiếng Anh - Unit 4</span>
+</div>
+</td>
+<td class="p-4 text-center">
+<span class="text-text-secondary text-sm">40</span>
+</td>
+<td class="p-4 text-center">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-500/10 text-blue-400">
+                                                    75%
+                                                </span>
+</td>
+<td class="p-4 text-right">
+<a class="text-primary hover:text-blue-400 text-sm font-medium inline-flex items-center gap-1 opacity-80 group-hover:opacity-100 transition-opacity" href="#">
+                                                    Xem câu sai 
+                                                    <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</a>
+</td>
+</tr>
+<!-- Row 3 (Highlighted Low Score) -->
+<tr class="bg-red-500/5 hover:bg-red-500/10 transition-colors group border-l-2 border-l-red-500">
+<td class="p-4">
+<div class="flex flex-col">
+<span class="text-white text-sm font-medium">14:00 PM</span>
+<span class="text-text-secondary text-xs">05/10/2023</span>
+</div>
+</td>
+<td class="p-4">
+<div class="flex items-center gap-2">
+<div class="size-2 rounded-full bg-red-500"></div>
+<span class="text-white text-sm font-medium">Sinh Học - Di truyền</span>
+</div>
+</td>
+<td class="p-4 text-center">
+<span class="text-text-secondary text-sm">15</span>
+</td>
+<td class="p-4 text-center">
+<div class="flex items-center justify-center gap-1">
+<span class="material-symbols-outlined text-red-500 text-[16px]">warning</span>
+<span class="text-red-500 font-bold text-sm">40%</span>
+</div>
+</td>
+<td class="p-4 text-right">
+<a class="text-red-400 hover:text-red-300 text-sm font-bold inline-flex items-center gap-1 opacity-100 transition-opacity" href="#">
+                                                    Xem ngay
+                                                    <span class="material-symbols-outlined text-[16px]">double_arrow</span>
+</a>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-[#282e39]/50 transition-colors group">
+<td class="p-4">
+<div class="flex flex-col">
+<span class="text-white text-sm font-medium">08:00 AM</span>
+<span class="text-text-secondary text-xs">04/10/2023</span>
+</div>
+</td>
+<td class="p-4">
+<div class="flex items-center gap-2">
+<div class="size-2 rounded-full bg-teal-500"></div>
+<span class="text-white text-sm">Vật Lý - Chương 1</span>
+</div>
+</td>
+<td class="p-4 text-center">
+<span class="text-text-secondary text-sm">30</span>
+</td>
+<td class="p-4 text-center">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-500/10 text-green-400">
+                                                    88%
+                                                </span>
+</td>
+<td class="p-4 text-right">
+<a class="text-primary hover:text-blue-400 text-sm font-medium inline-flex items-center gap-1 opacity-80 group-hover:opacity-100 transition-opacity" href="#">
+                                                    Xem câu sai 
+                                                    <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</a>
+</td>
+</tr>
+<!-- Row 5 -->
+<tr class="hover:bg-[#282e39]/50 transition-colors group">
+<td class="p-4">
+<div class="flex flex-col">
+<span class="text-white text-sm font-medium">15:30 PM</span>
+<span class="text-text-secondary text-xs">03/10/2023</span>
+</div>
+</td>
+<td class="p-4">
+<div class="flex items-center gap-2">
+<div class="size-2 rounded-full bg-yellow-500"></div>
+<span class="text-white text-sm">Hóa Học - Hữu cơ</span>
+</div>
+</td>
+<td class="p-4 text-center">
+<span class="text-text-secondary text-sm">25</span>
+</td>
+<td class="p-4 text-center">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-500/10 text-yellow-500">
+                                                    65%
+                                                </span>
+</td>
+<td class="p-4 text-right">
+<a class="text-primary hover:text-blue-400 text-sm font-medium inline-flex items-center gap-1 opacity-80 group-hover:opacity-100 transition-opacity" href="#">
+                                                    Xem câu sai 
+                                                    <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</a>
+</td>
+</tr>
+<!-- Row 6 -->
+<tr class="hover:bg-[#282e39]/50 transition-colors group">
+<td class="p-4">
+<div class="flex flex-col">
+<span class="text-white text-sm font-medium">10:00 AM</span>
+<span class="text-text-secondary text-xs">02/10/2023</span>
+</div>
+</td>
+<td class="p-4">
+<div class="flex items-center gap-2">
+<div class="size-2 rounded-full bg-blue-500"></div>
+<span class="text-white text-sm">Toán Đại Số</span>
+</div>
+</td>
+<td class="p-4 text-center">
+<span class="text-text-secondary text-sm">50</span>
+</td>
+<td class="p-4 text-center">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-500/10 text-green-400">
+                                                    95%
+                                                </span>
+</td>
+<td class="p-4 text-right">
+<a class="text-primary hover:text-blue-400 text-sm font-medium inline-flex items-center gap-1 opacity-80 group-hover:opacity-100 transition-opacity" href="#">
+                                                    Xem câu sai 
+                                                    <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</a>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination/Footer of Table -->
+<div class="p-4 border-t border-surface-border bg-[#1a1d24] flex justify-between items-center">
+<span class="text-xs text-text-secondary">Hiển thị 6 / 24 kết quả</span>
+<div class="flex gap-2">
+<button class="p-1 rounded hover:bg-[#323946] text-text-secondary disabled:opacity-50">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="p-1 rounded hover:bg-[#323946] text-white">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

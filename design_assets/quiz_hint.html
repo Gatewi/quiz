@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PettyQuizWeb - Gợi ý trả lời</title>
+<!-- Google Fonts: Lexend -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                        "surface-dark": "#1e293b", // Lighter shade for cards in dark mode
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem", 
+                        "lg": "0.5rem", 
+                        "xl": "0.75rem", 
+                        "2xl": "1rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar hiding if needed */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-white overflow-hidden h-screen w-full relative">
+<!-- BACKGROUND CONTENT (Simulating the Quiz Interface underneath) -->
+<!-- This section creates the context that we are "in a quiz" but it is blurred out -->
+<div aria-hidden="true" class="absolute inset-0 flex flex-col p-6 md:p-10 opacity-40 dark:opacity-30 pointer-events-none select-none z-0">
+<!-- Navbar simulation -->
+<div class="flex justify-between items-center mb-12">
+<div class="flex items-center gap-4">
+<div class="h-10 w-10 bg-slate-300 dark:bg-slate-700 rounded-full"></div>
+<div class="h-4 w-32 bg-slate-300 dark:bg-slate-700 rounded"></div>
+</div>
+<div class="h-10 w-24 bg-slate-300 dark:bg-slate-700 rounded-lg"></div>
+</div>
+<!-- Question simulation -->
+<div class="max-w-4xl w-full mx-auto space-y-6">
+<div class="flex justify-between text-sm font-medium text-slate-500 mb-2">
+<span>Câu hỏi 5/20</span>
+<span>00:45</span>
+</div>
+<div class="h-2 w-full bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden mb-8">
+<div class="h-full w-1/4 bg-primary"></div>
+</div>
+<div class="space-y-3">
+<div class="h-6 w-3/4 bg-slate-300 dark:bg-slate-600 rounded"></div>
+<div class="h-6 w-1/2 bg-slate-300 dark:bg-slate-600 rounded"></div>
+</div>
+<!-- Answer Grid simulation -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-10">
+<div class="h-20 bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center p-4">
+<div class="h-4 w-1/3 bg-slate-200 dark:bg-slate-600 rounded"></div>
+</div>
+<div class="h-20 bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center p-4">
+<div class="h-4 w-1/2 bg-slate-200 dark:bg-slate-600 rounded"></div>
+</div>
+<div class="h-20 bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center p-4">
+<div class="h-4 w-1/4 bg-slate-200 dark:bg-slate-600 rounded"></div>
+</div>
+<div class="h-20 bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center p-4">
+<div class="h-4 w-2/5 bg-slate-200 dark:bg-slate-600 rounded"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- MODAL OVERLAY -->
+<!-- Backdrop Blur -->
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0f121a]/60 backdrop-blur-md transition-all duration-300">
+<!-- POP-UP CARD -->
+<div class="relative w-full max-w-[440px] flex flex-col bg-white dark:bg-surface-dark rounded-2xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.5)] border border-slate-200 dark:border-slate-700/50 overflow-hidden transform transition-all scale-100">
+<!-- Top Accent Line -->
+<div class="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-primary/60 via-primary to-primary/60"></div>
+<!-- Decorative Background Glow -->
+<div aria-hidden="true" class="absolute -top-24 -right-24 w-48 h-48 bg-primary/20 rounded-full blur-3xl pointer-events-none"></div>
+<div class="p-8 flex flex-col items-center text-center relative z-10">
+<!-- Icon -->
+<div class="mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 ring-1 ring-primary/20 shadow-[0_0_20px_rgba(19,91,236,0.15)]">
+<span class="material-symbols-outlined text-primary text-3xl filled">lightbulb</span>
+</div>
+<!-- Title -->
+<h2 class="text-slate-900 dark:text-white tracking-tight text-2xl font-bold leading-tight mb-4">
+                    Gợi ý trợ giúp
+                </h2>
+<!-- Content Text -->
+<div class="prose prose-slate dark:prose-invert">
+<p class="text-slate-600 dark:text-slate-300 text-base font-medium leading-relaxed">
+                        Hãy nhớ lại định lý Pytago. Tổng bình phương của hai cạnh góc vuông bằng bình phương cạnh huyền. Thử kiểm tra lại các số liệu trong đề bài xem có khớp không?
+                    </p>
+</div>
+<!-- Action Button -->
+<div class="mt-8 w-full">
+<button class="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl h-12 px-6 bg-primary hover:bg-primary/90 text-white text-sm font-bold leading-normal tracking-wide transition-colors duration-200 shadow-lg shadow-primary/25 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:focus:ring-offset-surface-dark">
+<span class="truncate">Đã hiểu</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</body></html>

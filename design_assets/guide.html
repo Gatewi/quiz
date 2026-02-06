@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PettyQuizWeb - Hướng dẫn sử dụng</title>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Fonts: Lexend & Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Theme Config -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#135bec",
+              "background-light": "#f6f6f8",
+              "background-dark": "#101622",
+              "surface-dark": "#1c2333", // Slightly lighter than background-dark for cards
+              "surface-hover": "#252b3b",
+            },
+            fontFamily: {
+              "display": ["Lexend", "sans-serif"]
+            },
+            borderRadius: {
+              "DEFAULT": "0.25rem", 
+              "lg": "0.5rem", 
+              "xl": "0.75rem", 
+              "full": "9999px"
+            },
+          },
+        },
+      }
+    </script>
+<style>
+        /* Custom Accordion Logic via CSS for 'details[open]' */
+        details > summary {
+            list-style: none;
+        }
+        details > summary::-webkit-details-marker {
+            display: none;
+        }
+        
+        details[open] summary ~ * {
+            animation: sweep .3s ease-in-out;
+        }
+
+        @keyframes sweep {
+            0%    {opacity: 0; transform: translateY(-10px)}
+            100%  {opacity: 1; transform: translateY(0)}
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-white antialiased min-h-screen flex flex-col">
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 z-50 w-full border-b border-gray-200 dark:border-[#282e39] bg-white/90 dark:bg-[#111318]/90 backdrop-blur-md">
+<div class="container mx-auto max-w-[960px] px-4 h-16 flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="text-primary size-8 flex items-center justify-center">
+<span class="material-symbols-outlined text-[32px]">quiz</span>
+</div>
+<h1 class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">PettyQuizWeb</h1>
+</div>
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-sm font-medium text-slate-600 dark:text-gray-300 hover:text-primary dark:hover:text-white transition-colors" href="#">Trang chủ</a>
+<a class="text-sm font-medium text-slate-600 dark:text-gray-300 hover:text-primary dark:hover:text-white transition-colors" href="#">Thư viện</a>
+<a class="text-sm font-medium text-primary dark:text-white font-bold transition-colors" href="#">Hướng dẫn</a>
+</nav>
+<div class="flex items-center gap-4">
+<a class="hidden sm:block text-sm font-medium text-slate-600 dark:text-gray-300 hover:text-primary dark:hover:text-white transition-colors" href="#">Đăng nhập</a>
+<button class="bg-primary hover:bg-blue-600 text-white text-sm font-bold py-2 px-5 rounded-lg transition-all shadow-lg shadow-primary/20">
+                    Đăng ký
+                </button>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-grow">
+<!-- Header Section -->
+<section class="py-12 md:py-16">
+<div class="container mx-auto max-w-[960px] px-4 text-center">
+<span class="inline-block py-1 px-3 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider mb-4">Hỗ trợ khách hàng</span>
+<h2 class="text-3xl md:text-4xl font-black tracking-tight mb-4 text-slate-900 dark:text-white">Câu hỏi thường gặp</h2>
+<p class="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto text-lg">
+                    Tìm kiếm câu trả lời nhanh chóng cho các vấn đề bạn đang gặp phải khi sử dụng PettyQuizWeb.
+                </p>
+</div>
+</section>
+<!-- FAQ Accordion List -->
+<section class="pb-16">
+<div class="container mx-auto max-w-[800px] px-4">
+<div class="flex flex-col gap-4">
+<!-- Item 01 -->
+<details class="group bg-white dark:bg-surface-dark rounded-xl border border-gray-100 dark:border-[#282e39] overflow-hidden transition-all duration-300 hover:border-primary/50 open:border-primary dark:open:border-primary open:shadow-lg open:shadow-primary/5">
+<summary class="flex cursor-pointer items-center justify-between p-5 md:p-6 select-none list-none">
+<div class="flex items-center gap-4 md:gap-6">
+<span class="text-primary font-bold text-lg opacity-80">01.</span>
+<h3 class="font-bold text-base md:text-lg text-slate-800 dark:text-white group-hover:text-primary transition-colors">Làm thế nào để tạo một bài kiểm tra mới?</h3>
+</div>
+<span class="material-symbols-outlined text-slate-400 dark:text-slate-500 transition-transform duration-300 group-open:rotate-180 group-open:text-primary">expand_more</span>
+</summary>
+<div class="px-5 md:px-6 pb-6 pt-0 ml-[calc(1.125rem+1rem)] md:ml-[calc(1.125rem+1.5rem)]">
+<p class="text-slate-600 dark:text-slate-400 leading-relaxed text-sm md:text-base">
+                                Bạn có thể tạo bài kiểm tra mới bằng cách nhấp vào nút <strong class="text-slate-900 dark:text-white">'Tạo mới'</strong> trên thanh công cụ chính sau khi đăng nhập. Giao diện soạn thảo sẽ cho phép bạn thêm tiêu đề, mô tả và danh sách các câu hỏi trắc nghiệm hoặc tự luận.
+                            </p>
+</div>
+</details>
+<!-- Item 02 -->
+<details class="group bg-white dark:bg-surface-dark rounded-xl border border-gray-100 dark:border-[#282e39] overflow-hidden transition-all duration-300 hover:border-primary/50 open:border-primary dark:open:border-primary open:shadow-lg open:shadow-primary/5">
+<summary class="flex cursor-pointer items-center justify-between p-5 md:p-6 select-none list-none">
+<div class="flex items-center gap-4 md:gap-6">
+<span class="text-primary font-bold text-lg opacity-80">02.</span>
+<h3 class="font-bold text-base md:text-lg text-slate-800 dark:text-white group-hover:text-primary transition-colors">Tôi có thể chia sẻ bài quiz với người khác không?</h3>
+</div>
+<span class="material-symbols-outlined text-slate-400 dark:text-slate-500 transition-transform duration-300 group-open:rotate-180 group-open:text-primary">expand_more</span>
+</summary>
+<div class="px-5 md:px-6 pb-6 pt-0 ml-[calc(1.125rem+1rem)] md:ml-[calc(1.125rem+1.5rem)]">
+<p class="text-slate-600 dark:text-slate-400 leading-relaxed text-sm md:text-base">
+                                Có. Sau khi hoàn tất bài kiểm tra, bạn nhấn vào nút <strong class="text-slate-900 dark:text-white">'Chia sẻ'</strong>. Hệ thống sẽ cung cấp cho bạn một đường link trực tiếp hoặc mã QR để bạn gửi cho học sinh hoặc người tham gia. Bạn cũng có thể cài đặt chế độ công khai hoặc riêng tư.
+                            </p>
+</div>
+</details>
+<!-- Item 03 -->
+<details class="group bg-white dark:bg-surface-dark rounded-xl border border-gray-100 dark:border-[#282e39] overflow-hidden transition-all duration-300 hover:border-primary/50 open:border-primary dark:open:border-primary open:shadow-lg open:shadow-primary/5">
+<summary class="flex cursor-pointer items-center justify-between p-5 md:p-6 select-none list-none">
+<div class="flex items-center gap-4 md:gap-6">
+<span class="text-primary font-bold text-lg opacity-80">03.</span>
+<h3 class="font-bold text-base md:text-lg text-slate-800 dark:text-white group-hover:text-primary transition-colors">Làm sao để xem lại lịch sử làm bài?</h3>
+</div>
+<span class="material-symbols-outlined text-slate-400 dark:text-slate-500 transition-transform duration-300 group-open:rotate-180 group-open:text-primary">expand_more</span>
+</summary>
+<div class="px-5 md:px-6 pb-6 pt-0 ml-[calc(1.125rem+1rem)] md:ml-[calc(1.125rem+1.5rem)]">
+<p class="text-slate-600 dark:text-slate-400 leading-relaxed text-sm md:text-base">
+                                Truy cập vào mục <strong class="text-slate-900 dark:text-white">'Hồ sơ cá nhân'</strong> và chọn tab 'Lịch sử'. Tại đây, bạn sẽ thấy danh sách tất cả các bài kiểm tra đã tham gia cùng với điểm số chi tiết và thời gian hoàn thành.
+                            </p>
+</div>
+</details>
+<!-- Item 04 -->
+<details class="group bg-white dark:bg-surface-dark rounded-xl border border-gray-100 dark:border-[#282e39] overflow-hidden transition-all duration-300 hover:border-primary/50 open:border-primary dark:open:border-primary open:shadow-lg open:shadow-primary/5">
+<summary class="flex cursor-pointer items-center justify-between p-5 md:p-6 select-none list-none">
+<div class="flex items-center gap-4 md:gap-6">
+<span class="text-primary font-bold text-lg opacity-80">04.</span>
+<h3 class="font-bold text-base md:text-lg text-slate-800 dark:text-white group-hover:text-primary transition-colors">PettyQuizWeb có miễn phí không?</h3>
+</div>
+<span class="material-symbols-outlined text-slate-400 dark:text-slate-500 transition-transform duration-300 group-open:rotate-180 group-open:text-primary">expand_more</span>
+</summary>
+<div class="px-5 md:px-6 pb-6 pt-0 ml-[calc(1.125rem+1rem)] md:ml-[calc(1.125rem+1.5rem)]">
+<p class="text-slate-600 dark:text-slate-400 leading-relaxed text-sm md:text-base">
+                                PettyQuizWeb cung cấp gói miễn phí với đầy đủ các tính năng cơ bản để tạo và tham gia bài kiểm tra. Tuy nhiên, nếu bạn cần các tính năng nâng cao như phân tích dữ liệu sâu, xuất báo cáo PDF, hoặc số lượng người tham gia lớn hơn, bạn có thể tham khảo gói <strong class="text-slate-900 dark:text-white">Pro</strong> của chúng tôi.
+                            </p>
+</div>
+</details>
+<!-- Item 05 -->
+<details class="group bg-white dark:bg-surface-dark rounded-xl border border-gray-100 dark:border-[#282e39] overflow-hidden transition-all duration-300 hover:border-primary/50 open:border-primary dark:open:border-primary open:shadow-lg open:shadow-primary/5">
+<summary class="flex cursor-pointer items-center justify-between p-5 md:p-6 select-none list-none">
+<div class="flex items-center gap-4 md:gap-6">
+<span class="text-primary font-bold text-lg opacity-80">05.</span>
+<h3 class="font-bold text-base md:text-lg text-slate-800 dark:text-white group-hover:text-primary transition-colors">Tôi quên mật khẩu thì phải làm sao?</h3>
+</div>
+<span class="material-symbols-outlined text-slate-400 dark:text-slate-500 transition-transform duration-300 group-open:rotate-180 group-open:text-primary">expand_more</span>
+</summary>
+<div class="px-5 md:px-6 pb-6 pt-0 ml-[calc(1.125rem+1rem)] md:ml-[calc(1.125rem+1.5rem)]">
+<p class="text-slate-600 dark:text-slate-400 leading-relaxed text-sm md:text-base">
+                                Tại màn hình đăng nhập, vui lòng chọn liên kết "Quên mật khẩu". Hệ thống sẽ yêu cầu bạn nhập địa chỉ email đã đăng ký để gửi hướng dẫn đặt lại mật khẩu mới.
+                            </p>
+</div>
+</details>
+</div>
+</div>
+</section>
+<!-- Help & Support Section -->
+<section class="py-16 md:py-24 bg-white dark:bg-[#0d121c] border-t border-gray-100 dark:border-[#282e39]">
+<div class="container mx-auto max-w-[960px] px-4">
+<div class="flex flex-col md:flex-row gap-12 items-center justify-between">
+<div class="flex flex-col gap-4 max-w-lg text-center md:text-left">
+<h2 class="text-3xl font-black text-slate-900 dark:text-white leading-tight">
+                            Bạn vẫn cần hỗ trợ?
+                        </h2>
+<p class="text-slate-500 dark:text-slate-400 text-lg">
+                            Đội ngũ hỗ trợ của chúng tôi luôn sẵn sàng giải đáp mọi thắc mắc của bạn 24/7. Đừng ngần ngại liên hệ.
+                        </p>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full md:w-auto">
+<!-- Email Card -->
+<div class="group flex flex-col gap-4 p-6 rounded-2xl bg-gray-50 dark:bg-surface-dark border border-gray-200 dark:border-[#3b4354] hover:border-primary dark:hover:border-primary transition-all cursor-pointer">
+<div class="size-12 rounded-full bg-blue-100 dark:bg-primary/20 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">mail</span>
+</div>
+<div>
+<h3 class="font-bold text-slate-900 dark:text-white text-lg">Gửi email</h3>
+<p class="text-slate-500 dark:text-slate-400 text-sm mt-1 mb-3">Phản hồi trong vòng 2h</p>
+<a class="text-primary font-semibold text-sm hover:underline" href="mailto:support@pettyquiz.com">support@pettyquiz.com</a>
+</div>
+</div>
+<!-- Hotline Card -->
+<div class="group flex flex-col gap-4 p-6 rounded-2xl bg-gray-50 dark:bg-surface-dark border border-gray-200 dark:border-[#3b4354] hover:border-primary dark:hover:border-primary transition-all cursor-pointer">
+<div class="size-12 rounded-full bg-blue-100 dark:bg-primary/20 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">call</span>
+</div>
+<div>
+<h3 class="font-bold text-slate-900 dark:text-white text-lg">Hotline</h3>
+<p class="text-slate-500 dark:text-slate-400 text-sm mt-1 mb-3">Hỗ trợ trực tuyến 24/7</p>
+<a class="text-primary font-semibold text-sm hover:underline" href="tel:19001234">1900 1234</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-background-light dark:bg-background-dark border-t border-gray-200 dark:border-[#282e39] py-10">
+<div class="container mx-auto max-w-[960px] px-4 flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
+<p class="text-slate-500 dark:text-slate-400 text-sm">© 2023 PettyQuizWeb. All rights reserved.</p>
+<div class="flex flex-wrap justify-center gap-6 md:gap-8">
+<a class="text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-white text-sm font-medium transition-colors" href="#">Chính sách bảo mật</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-white text-sm font-medium transition-colors" href="#">Điều khoản sử dụng</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-white text-sm font-medium transition-colors" href="#">Liên hệ</a>
+</div>
+</div>
+</footer>
+<!-- Script to handle accordion exclusive open -->
+<script>
+        const detailsElements = document.querySelectorAll("details");
+        detailsElements.forEach((detail) => {
+            detail.addEventListener("toggle", () => {
+                if (detail.open) {
+                    detailsElements.forEach((otherDetail) => {
+                        if (otherDetail !== detail && otherDetail.open) {
+                            otherDetail.removeAttribute("open");
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+</body></html>

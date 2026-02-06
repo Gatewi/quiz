@@ -12,7 +12,7 @@ const Layout: React.FC = () => {
                             <div className="size-8 text-primary flex items-center justify-center bg-primary/10 rounded-lg">
                                 <span className="material-symbols-outlined" style={{ fontSize: '24px' }}>school</span>
                             </div>
-                            <h1 className="text-white text-xl font-bold tracking-tight">PettyQuizWeb</h1>
+                            <h1 className="text-white text-xl font-bold tracking-tight">PettyQuiz</h1>
                         </Link>
                     </div>
                     <nav className="hidden md:flex items-center gap-1">

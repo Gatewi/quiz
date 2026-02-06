@@ -6,7 +6,7 @@ export type UserRole = 'admin' | 'student' | 'teacher';
 export type QuizStatus = 'in-progress' | 'completed' | 'expired';
 
 export interface Profile {
-    id_user: string;
+    id_user: number;
     user_name: string;
     user_email: string;
     user_pass?: string; // Optional for frontend safety
@@ -44,7 +44,7 @@ export interface Lesson {
 }
 
 export interface Question {
-    id_question: string;
+    id_question: number;
     id_subject: SubjectId;
     id_lesson: string;
     question_name: string;
@@ -66,8 +66,8 @@ export interface QuizSettings {
 }
 
 export interface QuizSession {
-    id: string;
-    id_user: string;
+    id: number;
+    id_user: number;
     total_questions: number;
     correct_answers: number;
     time_elapsed_seconds: number;
@@ -83,9 +83,17 @@ export interface QuizSession {
 
 export interface SessionAnswer {
     id: string;
-    session_id: string;
-    id_question: string;
+    session_id: number;
+    id_question: number;
     selected_answer: string; // "1", "2", "3", "4"
     is_correct: boolean;
     answered_at: string;
+}
+
+export interface QuestionAnswer {
+    id_qa: number;
+    qa_question: string;
+    qa_answer: string;
+    sort: number;
+    created_at: string;
 }

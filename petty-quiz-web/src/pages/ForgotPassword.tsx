@@ -107,7 +107,7 @@ const ForgotPassword: React.FC = () => {
                 </div>
 
                 <div className="mt-16 border-t border-slate-200 dark:border-slate-800 pt-8 w-full max-w-4xl flex flex-col md:flex-row items-center justify-between gap-4 text-slate-500 dark:text-slate-500 text-sm">
-                    <p>© 2024 PettyQuizWeb. Bảo mật thông tin của bạn là ưu tiên hàng đầu.</p>
+                    <p>© 2024 PettyQuiz. Bảo mật thông tin của bạn là ưu tiên hàng đầu.</p>
                     <div className="flex items-center gap-6">
                         <a className="hover:text-primary transition-colors" href="#">Điều khoản</a>
                         <a className="hover:text-primary transition-colors" href="#">Quyền riêng tư</a>

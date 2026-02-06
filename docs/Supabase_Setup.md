@@ -1,6 +1,6 @@
 # Hướng dẫn thiết lập Supabase cho PettyQuiz
 
-Tài liệu này hướng dẫn bạn cách khởi tạo Database trên Supabase và kết nối với ứng dụng PettyQuizWeb.
+Tài liệu này hướng dẫn bạn cách khởi tạo Database trên Supabase và kết nối với ứng dụng PettyQuiz.
 
 ## 1. Lựa chọn môi trường phát triển
 Bạn có thể chọn một trong hai cách sau:

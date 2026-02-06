@@ -16,10 +16,13 @@ const Home: React.FC = () => {
     const [showWelcomeMsg, setShowWelcomeMsg] = useState(false);
 
     // Filtered lessons based on grade and subject from Context
-    const filteredLessons = lessons.filter(lesson =>
-        (selectedGradeId === '' || lesson.id_grade === selectedGradeId) &&
-        (selectedSubjectId === '' || lesson.id_subject === selectedSubjectId)
-    );
+    // Only show lessons if both Grade and Subject are selected
+    const filteredLessons = (selectedGradeId === '' || selectedSubjectId === '')
+        ? []
+        : lessons.filter(lesson =>
+            lesson.id_grade === selectedGradeId &&
+            lesson.id_subject === selectedSubjectId
+        );
 
     // Calculate active IDs based on actual lesson content
     const activeGradeIds = new Set(lessons.map(l => l.id_grade));
@@ -41,6 +44,7 @@ const Home: React.FC = () => {
     const quantity = parseInt(selectedQuantity) || 0;
     const time = Math.round(quantity * 0.5);
     const isCreateEnabled = selectedGradeId !== '' && selectedSubjectId !== '' && selectedQuantity !== '' && lessonsCount > 0 && !isLoading;
+    const isSelectionComplete = selectedGradeId !== '' && selectedSubjectId !== '';
 
     const handleToggleLesson = (id: string) => {
         setSelectedLessonIds(prev =>
@@ -171,7 +175,7 @@ const Home: React.FC = () => {
                 <div className="flex-1 flex flex-col bg-surface-dark rounded-2xl border border-border-dark overflow-hidden shadow-sm">
                     <div className="px-6 py-4 border-b border-border-dark bg-surface-darker flex items-center justify-between sticky top-0 z-10">
                         <span className="font-semibold text-white">Danh sách bài học</span>
-                        <label className="flex items-center gap-3 cursor-pointer group select-none">
+                        <label className={`flex items-center gap-3 cursor-pointer group select-none ${!isSelectionComplete ? 'opacity-50 cursor-not-allowed' : ''}`}>
                             <span className="text-sm font-medium text-text-secondary group-hover:text-white transition-colors">Chọn tất cả các bài học</span>
                             <div className="relative flex items-center">
                                 <input
@@ -179,6 +183,7 @@ const Home: React.FC = () => {
                                     className="peer size-5 rounded border-2 border-gray-600 bg-transparent text-primary focus:ring-0 focus:ring-offset-0 transition-all checked:border-primary"
                                     checked={filteredLessons.length > 0 && selectedLessonIds.length === filteredLessons.length}
                                     onChange={(e) => handleSelectAll(e.target.checked)}
+                                    disabled={!isSelectionComplete}
                                 />
                             </div>
                         </label>

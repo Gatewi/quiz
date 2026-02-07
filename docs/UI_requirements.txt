@@ -2,7 +2,7 @@ Tôi muốn thiết kế giao diện cho một web app để làm bài thi trắ
 Web app với giao diện bằng **tiếng Việt**, thiết kế tối giản và chuyên nghiệp, với màu blue làm chủ đạo, có chức năng chuyển đổi dark mode, lấy tông màu dark mode làm mặc định.
 
 Các tính năng chính bao gồm.
-Menu gồm có: Trang chủ, Báo cáo, Học nhóm, Hướng dẫn
+Menu gồm có: Trang chủ, Báo cáo (kèm Quản lý nhóm, Thông tin cá nhân), Hướng dẫn
 
 **1. Giao diện 'Trang chủ'**
 - Text: "Chào mừng bạn!" và  "Hãy chọn các tham số để tạo bài kiểm tra" trên cùng một dòng ngay cạnh chữ "Chào mừng bạn!" . Chữ "Chào mừng bạn!" nổi bật. Và "Hãy chọn các tham số để tạo bài kiểm tra" có cỡ chữ nhỏ hơn mang tính chất chỉ dẫn.
@@ -35,12 +35,18 @@ Menu gồm có: Trang chủ, Báo cáo, Học nhóm, Hướng dẫn
 - Danh sách các câu trả lời sai, Câu trả lời sai, Đáp án đúng, Lời giải / gợi ý để trả lời
 
 **4. Giao diện 'Báo cáo kết quả'**
-- Text tiêu đề "Báo cáo kết quả" (Bên Trái)
-- 2 ô Box để chọn thời gian: 'Từ ngày' ... và 'Đến ngày' ..... Mặc định là báo cáo 7 ngày ngần nhất tính từ thời điểm hiện tại. Đặt phía bên phải của Text tiêu đề.
-- Số liệu tổng hợp của tất cả các môn: Tổng Số môn đã làm bài thi, Tổng Số lượng bài thi đã hoàn thành, Tỷ lệ trung bình (%). Số liệu này nằm trái Giao diện. Ngay dưới Text tiêu đề
-- Biểu đồ 1: Tổng hợp kết quả theo từng môn học: Tên Môn học, Biểu đổ dạng thanh ngang, biểu diễn tỷ lệ trung bình % cho từng môn kèm theo label là số liệu thống kê '92% (24 bài)'. Biểu đồ được sắp xếp theo tỷ lệ % từ cao xuống thấp. 
-- Danh sách 2: Lịch sử làm bài kiểm tra: Thời gian, Môn học, Số câu hỏi, Tỷ lệ hoàn thành, Xem câu sai >>. Danh sách này nằm bên Phải [Biểu đồ 1]. Có mũi tên Lên/Xuống để sắp xếp tại tiêu đề từng cột. Làm nổi bật dòng các bài thi có Tỷ lệ hoàn thành dưới 50%. Tỷ lệ hoàn thành chỉ cần số % không cần thanh trạng thái. Có thanh trượt nhỏ bên phải để xem các bản ghi khác bên dưới
-- Mỗi danh sách có thanh trược dọc nhỏ bên tay phải.
+- Sidebar bên trái: Menu điều hướng gồm "Báo cáo", "Quản lý nhóm" (Đang xây dựng), "Thông tin cá nhân" (Đang xây dựng). Hiển thị thông tin user rút gọn.
+- Phần Header (Bên phải):
+    - Text tiêu đề thay đổi theo mục đang chọn (Ví dụ: "Báo cáo kết quả", "Quản lý nhóm"...).
+    - 2 ô Box để chọn thời gian: 'Từ ngày' ... và 'Đến ngày' ..... được căn giữa (Center) để tạo sự cân đối.
+- Nội dung chính (Dashboard):
+    - Số liệu tổng hợp (Stats Cards): Hiển thị trên 1 hàng ngang gồm 4 thẻ: Môn học, Bài kiểm tra, Câu đúng, Điểm trung bình.
+    - Kết quả theo môn (Subject Stats): Biểu đồ dạng thanh nằm bên trái, cân đối chiều cao với phần Stats Cards.
+    - Lịch sử làm bài kiểm tra (Table): Nằm bên phải (hoặc bên dưới trên màn hình nhỏ).
+        - Các cột: Thời gian (Định dạng DD/MM/YYYY hh:mm), Môn học, Kết quả, Tỷ lệ, Ghi chú.
+        - Chức năng sắp xếp: Có thể click vào tiêu đề cột để sắp xếp tăng/giảm.
+        - Highlight: Các dòng có tỷ lệ đúng < 50% sẽ được tô nền đỏ nhạt để cảnh báo.
+        - Pagination/Scroll: Có thanh trượt để xem danh sách dài.
 - Nút 'Trang chủ', 'Làm bài bài mới'. Nút 'Làm bài thi mới' nổi bật hơn.
 
 **5. Giao diện 'Hướng dẫn'**

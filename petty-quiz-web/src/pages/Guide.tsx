@@ -60,7 +60,7 @@ const Guide: React.FC = () => {
                                             </div>
                                             {openIndex === idx && (
                                                 <div className="px-5 md:px-6 pb-6 pt-0 ml-[calc(1.125rem+1rem)] md:ml-[calc(1.125rem+1.5rem)] animate-[sweep_0.3s_ease-in-out]">
-                                                    <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-sm md:text-base">
+                                                    <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-sm md:text-base whitespace-pre-line">
                                                         {faq.qa_answer}
                                                     </p>
                                                 </div>

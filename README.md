@@ -7,11 +7,16 @@ PettyQuiz là một ứng dụng web hiện đại được thiết kế để g
 - **Permanent Dark Mode**: Giao diện tối chuyên nghiệp, bảo vệ mắt và tăng sự tập trung.
 - **Xáo trộn đáp án**: Mỗi lần làm bài, thứ tự đáp án sẽ được thay đổi ngẫu nhiên nhưng vẫn đảm bảo tính ổn định trong suốt phiên làm bài.
 - **Hệ thống gợi ý (Hints)**: Hỗ trợ học sinh khi gặp câu hỏi khó.
-- **Báo cáo chi tiết**: Theo dõi lịch sử làm bài, điểm số và tiến độ theo môn học.
+- **Báo cáo chi tiết**:
+    - Theo dõi lịch sử làm bài, điểm số và tiến độ theo môn học.
+    - **Sắp xếp lịch sử**: Sắp xếp bảng kết quả theo thời gian, điểm số,...
+    - **Cảnh báo điểm thấp**: Tự động tô đỏ các bài làm có kết quả dưới 50%.
+- **Quản lý nhóm & Cá nhân**: (Tính năng đang phát triển) Các mục quản lý thông tin người dùng và nhóm học tập.
 
 ## 🛠️ Công nghệ sử dụng
 - **Frontend**: React 18, TypeScript, Vite.
 - **Styling**: Tailwind CSS, Material Symbols.
+- **Router**: React Router DOM (v6).
 - **State Management**: React Context API.
 - **Backend (Dự kiến)**: Supabase (đã có schema sẵn sàng).
 
@@ -62,7 +67,11 @@ PettyQuiz là một ứng dụng web hiện đại được thiết kế để g
 ### 3. Xem kết quả & Báo cáo
 - Sau khi nhấn **Hoàn thành**, bạn sẽ được chuyển đến trang kết quả với điểm số và tỷ lệ phần trăm.
 - Hệ thống sẽ liệt kê các câu trả lời sai kèm **Giải thích chi tiết**.
-- Truy cập mục **Báo cáo** để xem lại toàn bộ lịch sử luyện tập và biểu đồ tiến độ.
+- Truy cập mục **Báo cáo** để:
+    - Xem biểu đồ thống kê theo môn học.
+    - Lọc lịch sử theo ngày tháng.
+    - Sắp xếp bảng lịch sử làm bài.
+    - Truy cập các tính năng **Quản lý nhóm** và **Thông tin cá nhân** (Đang xây dựng).
 
 ---
 *Dự án được được phát triển để phục vụ mục đích giáo dục.*

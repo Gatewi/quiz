@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 import type { QuizSession, QuizSettings, Grade, Subject, Lesson, Question } from '../types';
 import { supabase } from '../utils/supabase';
 import { shuffleArray } from '../utils/shuffle';
-import { mockUserProfile, MOCK_USER_ID } from '../data/mock';
+import { MOCK_USER_ID } from '../data/mock';
 import { useAuth } from './AuthContext';
 
 interface QuizContextType {

@@ -138,7 +138,7 @@ const ExamInterface: React.FC = () => {
                                                     name="quiz-option"
                                                     className="peer h-5 w-5 border-2 border-gray-500 bg-transparent text-transparent checked:border-primary checked:bg-primary focus:ring-0 focus:ring-offset-0 transition-all"
                                                     checked={answers[currentQ.id_question] === option.id}
-                                                    onChange={() => submitAnswer(currentQ.id_question, option.id)}
+                                                    onChange={() => submitAnswer(currentQ.id_question.toString(), option.id)}
                                                 />
                                             </div>
                                             <div className="flex grow flex-col">

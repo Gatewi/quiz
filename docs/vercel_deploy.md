@@ -52,12 +52,39 @@ Sau khi deploy thành công:
 - Bất cứ khi nào bạn **Git Push** lên nhánh `main`, Vercel sẽ tự động build và cập nhật phiên bản mới nhất cho định website của bạn.
 - Bạn có thể tùy chỉnh tên miền riêng (Custom Domain) trong mục **Settings** -> **Domains**.
 
-## 5. Xử lý sự cố (Troubleshooting)
+## 5. Hướng dẫn kiểm tra lỗi (Debug) trên Vercel
 
+Nếu website không cập nhật hoặc gặp lỗi, hãy làm theo các bước sau để tìm nguyên nhân:
+
+### Bước 1: Kiểm tra trạng thái Deployment
+1. Truy cập [Vercel Dashboard](https://vercel.com/dashboard).
+2. Chọn dự án **quiz** (hoặc tên dự án bạn đã đặt).
+3. Chuyển sang tab **Deployments**.
+4. Bạn sẽ thấy danh sách các lần deploy.
+    - **Ready** (Xanh lá): Đã deploy thành công.
+    - **Building** (Xanh dương): Đang trong quá trình xử lý.
+    - **Error** (Đỏ): Gặp lỗi trong quá trình Build.
+
+### Bước 2: Xem chi tiết lỗi (Build Logs)
+Nếu trạng thái là **Error**, hãy:
+1. Nhấn vào dòng deployment bị lỗi.
+2. Màn hình sẽ hiện ra chi tiết các bước (Building, Assigning Domains...).
+3. Nhấn vào mục **Building** (thường có màu đỏ).
+4. Cuộn xuống khung bên phải để đọc **Log**.
+    - Tìm các dòng có chữ `Error` hoặc màu đỏ.
+    - Ví dụ phổ biến: `Module not found`, `TypeScript error`, `Command failed`.
+
+### Bước 3: Xem lỗi Runtime (Website trắng trang/lỗi 500)
+Nếu deploy thành công (Ready) nhưng vào web bị lỗi:
+1. Trên trang chủ dự án Vercel, chọn tab **Logs**.
+2. Tại đây sẽ hiển thị các log thực thi khi người dùng truy cập web.
+3. F5 lại trang web bị lỗi, sau đó quay lại tab Logs để xem thông báo lỗi mới nhất xuất hiện.
+
+## 6. Xử lý sự cố thường gặp
 ### Website không cập nhật sau khi Push?
-1. **Kiểm tra trạng thái Build**: Truy cập Vercel Dashboard, chọn Project, xem mục **Deployments**. Nếu trạng thái là `Building` hoặc `Queued`, hãy chờ thêm. Nếu `Error`, xem log để sửa lỗi.
-2. **Xóa Cache trình duyệt**: Nhấn `Ctrl + F5` (Windows) hoặc `Cmd + Shift + R` (Mac) để tải lại trang mới nhất.
-3. **Kiểm tra nhánh**: Đảm bảo bạn đã push lên đúng nhánh `main` (hoặc nhánh được cấu hình Production).
+1. **Kiểm tra trạng thái Build**: Như Bước 1 ở trên.
+2. **Xóa Cache trình duyệt**: Nhấn `Ctrl + F5` (Windows) hoặc `Cmd + Shift + R` (Mac).
+3. **Kiểm tra nhánh**: Đảm bảo code đã lên nhánh `main`.
 
 ### Lỗi 404 khi load lại trang con?
 - Đảm bảo file `vercel.json` đã tồn tại trong thư mục `petty-quiz-web` với cấu hình rewrites đúng.

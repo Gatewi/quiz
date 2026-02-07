@@ -12,24 +12,30 @@ import GroupStudy from './pages/GroupStudy';
 import ForgotPassword from './pages/ForgotPassword';
 import { QuizProvider } from './context/QuizContext';
 
+import { AuthProvider } from './context/AuthContext';
+import Register from './pages/Register';
+
 function App() {
   return (
-    <QuizProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/" element={<Layout />}>
-            <Route index element={<Home />} />
-            <Route path="report" element={<Report />} />
-            <Route path="group" element={<GroupStudy />} />
-            <Route path="guide" element={<Guide />} />
-            <Route path="forgot-password" element={<ForgotPassword />} />
-          </Route>
-          <Route path="/exam" element={<ExamInterface />} />
-          <Route path="/exam-result" element={<ExamResult />} />
-        </Routes>
-      </BrowserRouter>
-    </QuizProvider>
+    <AuthProvider>
+      <QuizProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/" element={<Layout />}>
+              <Route index element={<Home />} />
+              <Route path="report" element={<Report />} />
+              <Route path="group" element={<GroupStudy />} />
+              <Route path="guide" element={<Guide />} />
+              <Route path="forgot-password" element={<ForgotPassword />} />
+            </Route>
+            <Route path="/exam" element={<ExamInterface />} />
+            <Route path="/exam-result" element={<ExamResult />} />
+          </Routes>
+        </BrowserRouter>
+      </QuizProvider>
+    </AuthProvider>
   );
 }
 

@@ -1,59 +1,57 @@
-# Hướng dẫn thiết lập Supabase cho PettyQuiz
+# Supabase Setup Guide
 
-Tài liệu này hướng dẫn bạn cách khởi tạo Database trên Supabase và kết nối với ứng dụng PettyQuiz.
+This guide details the steps to set up the Supabase backend for the PettyQuiz application.
 
-## 1. Lựa chọn môi trường phát triển
-Bạn có thể chọn một trong hai cách sau:
-- **Cloud (Khuyên dùng)**: Dễ thiết lập, truy cập được từ mọi nơi. Xem hướng dẫn bên dưới.
-- **Local (Docker)**: Chạy trên máy cá nhân, nhanh và offline. Xem [Hướng dẫn Supabase Local](file:///c:/setup/Antigravity/quiz/docs/Local_Supabase_Setup.md).
+## 1. Create a New Project
+1.  Go to [Supabase Dashboard](https://supabase.com/dashboard).
+2.  Click "New Project".
+3.  Enter a Name (e.g., `PettyQuiz`) and Database Password.
+4.  Choose a Region close to your users (e.g., Singapore).
 
-## 2. Tạo Project trên Supabase Cloud
+## 2. Execute SQL Schema
+Navigate to the **SQL Editor** in your Supabase dashboard and run the following script. This script creates all necessary tables (`profiles`, `grades`, `subjects`, `lessons`, `questions`, `quiz_sessions`, etc.) and sets up Row Level Security (RLS).
 
-## 2. Khởi tạo Database Schema
-1. Trong Dashboard Supabase, chọn mục **SQL Editor** (icon `>_` ở thanh bên trái).
-2. Nhấn **New Query**.
-3. Mở tệp [supabase_schema.sql](file:///c:/setup/Antigravity/quiz/supabase_schema.sql) trong thư mục gốc của dự án.
-4. Sao chép toàn bộ nội dung tệp SQL và dán vào SQL Editor trên trình duyệt.
-5. Nhấn **Run**.
-6. Kiểm tra mục **Table Editor** để đảm bảo các bảng (`profiles`, `grades`, `subjects`, `lessons`, `questions`, ...) đã được tạo thành công.
+**Copy content from:** `supabase_schema.sql`
 
-## 3. Cấu hình xác thực (Authentication)
-1. Vào mục **Authentication** -> **Providers**.
-2. Đảm bảo **Email** đã được bật (mặc định).
-3. (Tùy chọn) Bật **Google** provider nếu bạn muốn sử dụng đăng nhập bằng Google.
-4. Vào **Authentication** -> **URL Configuration** và gán `Site URL` là địa chỉ website của bạn (ví dụ: `http://localhost:5173`).
+### Latest Updates (Detailed History)
+If you already have the database set up, run this migration to add the `wrong_answers` column:
 
-## 4. Kết nối Frontend với Supabase
-
-### Bước 1: Cài đặt SDK
-Mở terminal trong thư mục `petty-quiz-web` và chạy:
-```bash
-npm install @supabase/supabase-js
+```sql
+ALTER TABLE public.quiz_sessions 
+ADD COLUMN wrong_answers jsonb; -- Stores array of wrong answer details
 ```
 
-### Bước 2: Cấu hình biến môi trường
-Tạo tệp `.env` trong thư mục `petty-quiz-web/` (nếu chưa có) và thêm các thông tin từ mục **Project Settings** -> **API**:
+## 3. Seed Initial Data
+To populate the database with initial categories (Grades 10-12, Subjects) and sample data, you can run the SQL commands found in `src/data/seed.sql` (if available) or manually insert data into `grades` and `subjects` tables.
+
+*Example Seed:*
+```sql
+INSERT INTO grades (id_grade, grade_name) VALUES 
+('g10', 'Lớp 10'), ('g11', 'Lớp 11'), ('g12', 'Lớp 12');
+
+INSERT INTO subjects (id_subject, subject_name) VALUES 
+('math', 'Toán'), ('phys', 'Vật lý'), ('chem', 'Hóa học'), ('eng', 'Tiếng Anh');
+```
+
+## 4. Environment Variables
+Create a `.env` file in the project root with your Supabase credentials:
+
 ```env
-VITE_SUPABASE_URL=https://ukdcmhfnabmpwdwybzkf.supabase.co
-VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVrZGNtaGZuYWJtcHdkd3liemtmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAzNTk2ODgsImV4cCI6MjA4NTkzNTY4OH0.UQvkpst4n6kEsJJTIXG54oIl10RJTvhb06_aQDmq-b0
+VITE_SUPABASE_URL=https://your-project-id.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-key
 ```
 
-### Bước 3: Khởi tạo Client
-Tạo tệp `src/utils/supabase.ts`:
-```typescript
-import { createClient } from '@supabase/supabase-js';
+## 5. Authentication Settings
+1.  Go to **Authentication** -> **Providers**.
+2.  Enable **Email/Password**.
+3.  (Optional) Enable **Google** and configure Client ID/Secret.
+4.  Disable "Confirm email" in **Authentication** -> **URL Configuration** if you want instant login for testing.
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+## 6. Storage (Optional)
+If you plan to use user avatars:
+1.  Go to **Storage**.
+2.  Create a new public bucket named `avatars`.
+3.  Add policy to allow authenticated users to upload/select.
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
-```
-
-## 5. Bảo mật với Row Level Security (RLS)
-Các chính sách bảo mật đã được bao gồm trong tệp `supabase_schema.sql`. 
-- **Profiles**: Người dùng chỉ có thể sửa thông tin của chính mình.
-- **Quizzes/Questions**: Mọi người có thể đọc để làm bài.
-- **Quiz Sessions**: Người dùng chỉ có thể xem/tạo/cập nhật phiên làm bài của chính họ.
-
----
-*Lưu ý: Sau khi hoàn tất, bạn có thể thay thế các dữ liệu Mock trong `src/data/mock.ts` bằng logic gọi API từ `supabase` client.*
+## 7. Extensions
+The schema uses `pgcrypto` or `uuid-ossp` for UUID generation. Ensure these extensions are enabled in **Database** -> **Extensions**.

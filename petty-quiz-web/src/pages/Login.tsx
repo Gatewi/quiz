@@ -1,9 +1,56 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { supabase } from '../utils/supabase';
 
 const Login: React.FC = () => {
     const navigate = useNavigate();
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [errorMsg, setErrorMsg] = useState('');
+
+    const handleLogin = async () => {
+        setErrorMsg('');
+        if (!email || !password) {
+            setErrorMsg('Vui lòng nhập email và mật khẩu.');
+            return;
+        }
+
+        setLoading(true);
+        try {
+            const { error } = await supabase.auth.signInWithPassword({
+                email,
+                password
+            });
+
+            if (error) throw error;
+
+            navigate('/');
+        } catch (error: any) {
+            console.error('Login error:', error);
+            setErrorMsg('Đăng nhập thất bại. Kiểm tra lại email/mật khẩu.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleGoogleLogin = async () => {
+        setLoading(true);
+        try {
+            const { error } = await supabase.auth.signInWithOAuth({
+                provider: 'google',
+                options: {
+                    redirectTo: `${window.location.origin}/`
+                }
+            });
+            if (error) throw error;
+        } catch (error: any) {
+            console.error('Google login error:', error);
+            setErrorMsg('Lỗi đăng nhập Google: ' + error.message);
+            setLoading(false);
+        }
+    };
 
     return (
         <div className="bg-background-dark text-white font-display min-h-screen flex items-center justify-center relative overflow-hidden">
@@ -30,16 +77,33 @@ const Login: React.FC = () => {
 
                 {/* Form Section */}
                 <div className="w-full flex flex-col gap-6">
+                    {errorMsg && (
+                        <div className="p-3 bg-red-500/20 border border-red-500/50 rounded-lg text-red-200 text-sm text-center">
+                            {errorMsg}
+                        </div>
+                    )}
                     <label className="flex flex-col w-full">
                         <p className="text-white text-base font-medium leading-normal pb-2">Email</p>
-                        <input className="form-input flex w-full min-w-0 resize-none overflow-hidden rounded-lg text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-dark bg-card-dark focus:border-primary h-14 placeholder:text-text-secondary p-[15px] text-base font-normal leading-normal transition-all" placeholder="name@example.com" type="email" />
+                        <input
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            className="form-input flex w-full min-w-0 resize-none overflow-hidden rounded-lg text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-slate-600 bg-[#1a1d24] focus:border-primary h-14 placeholder:text-gray-500 p-[15px] text-base font-normal leading-normal transition-all"
+                            placeholder="name@example.com"
+                            type="email"
+                        />
                     </label>
                     <label className="flex flex-col w-full">
                         <div className="flex justify-between items-center pb-2">
                             <p className="text-white text-base font-medium leading-normal">Mật khẩu</p>
                         </div>
                         <div className="relative flex w-full items-stretch rounded-lg">
-                            <input className="form-input flex w-full min-w-0 resize-none overflow-hidden rounded-lg text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-border-dark bg-card-dark focus:border-primary h-14 placeholder:text-text-secondary p-[15px] pr-12 text-base font-normal leading-normal transition-all" placeholder="••••••••" type="password" />
+                            <input
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                className="form-input flex w-full min-w-0 resize-none overflow-hidden rounded-lg text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-slate-600 bg-[#1a1d24] focus:border-primary h-14 placeholder:text-gray-500 p-[15px] pr-12 text-base font-normal leading-normal transition-all"
+                                placeholder="••••••••"
+                                type="password"
+                            />
                             <button className="absolute right-0 top-0 bottom-0 px-4 text-text-secondary hover:text-white transition-colors flex items-center justify-center focus:outline-none">
                                 <span className="material-symbols-outlined text-[24px]">visibility</span>
                             </button>
@@ -50,19 +114,19 @@ const Login: React.FC = () => {
                     </label>
                     <button
                         className="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 bg-primary hover:bg-blue-600 text-white text-base font-bold leading-normal tracking-[0.015em] transition-all shadow-lg shadow-blue-900/20 active:scale-[0.98]"
-                        onClick={() => {
-                            sessionStorage.setItem('show_welcome', 'true');
-                            navigate('/');
-                        }}
+                        onClick={handleLogin}
+                        disabled={loading}
                     >
-                        <span className="truncate">Đăng nhập</span>
+                        <span className="truncate">{loading ? 'Đang xử lý...' : 'Đăng nhập'}</span>
                     </button>
                     <div className="relative flex py-2 items-center">
                         <div className="flex-grow border-t border-border-dark"></div>
                         <span className="flex-shrink mx-4 text-text-secondary text-sm">Hoặc</span>
                         <div className="flex-grow border-t border-border-dark"></div>
                     </div>
-                    <button className="flex w-full cursor-pointer items-center justify-center gap-3 overflow-hidden rounded-lg h-12 bg-card-dark border border-border-dark hover:bg-white/5 text-white text-base font-medium leading-normal transition-all active:scale-[0.98]">
+                    <button
+                        onClick={handleGoogleLogin} disabled={loading}
+                        className="flex w-full cursor-pointer items-center justify-center gap-3 overflow-hidden rounded-lg h-12 bg-card-dark border border-border-dark hover:bg-white/5 text-white text-base font-medium leading-normal transition-all active:scale-[0.98]">
                         <svg className="size-6" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
                             <path d="M43.611 20.083H42V20H24V28H35.303C33.604 32.946 28.93 36.5 24 36.5C17.096 36.5 11.5 30.904 11.5 24C11.5 17.096 17.096 11.5 24 11.5C27.202 11.5 30.113 12.723 32.333 14.735L38.414 8.654C34.568 5.074 29.507 3 24 3C12.4 3 3 12.4 3 24C3 35.6 12.4 45 24 45C35.6 45 45 35.6 45 24C45 22.665 44.864 21.354 44.611 20.083Z" fill="#FFC107"></path>
                             <path d="M6.306 14.691L12.877 19.51C14.655 15.108 18.961 12 24 12C27.202 12 30.113 13.223 32.333 15.235L38.414 9.154C34.568 5.574 29.507 3.5 24 3.5C16.638 3.5 10.222 7.784 6.306 14.691Z" fill="#FF3D00"></path>
@@ -76,7 +140,7 @@ const Login: React.FC = () => {
                 <div className="mt-8 text-center">
                     <p className="text-text-secondary text-sm font-normal leading-normal">
                         Chưa có tài khoản?
-                        <a className="text-primary font-bold hover:text-blue-400 hover:underline transition-all ml-1" href="#">Đăng ký ngay</a>
+                        <Link className="text-primary font-bold hover:text-blue-400 hover:underline transition-all ml-1" to="/register">Đăng ký ngay</Link>
                     </p>
                 </div>
             </div>

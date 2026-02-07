@@ -2,6 +2,8 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 import type { QuizSession, QuizSettings, Grade, Subject, Lesson, Question } from '../types';
 import { supabase } from '../utils/supabase';
 import { shuffleArray } from '../utils/shuffle';
+import { mockUserProfile, MOCK_USER_ID } from '../data/mock';
+import { useAuth } from './AuthContext';
 
 interface QuizContextType {
     session: QuizSession | null;
@@ -14,6 +16,8 @@ interface QuizContextType {
     prevQuestion: () => void;
     decrementHints: () => void;
     finishQuiz: () => void;
+    resetQuiz: () => void;
+    loadSession: (session: QuizSession) => void;
     isFinished: boolean;
     // Dynamic Data
     grades: Grade[];
@@ -26,6 +30,7 @@ interface QuizContextType {
 const QuizContext = createContext<QuizContextType | undefined>(undefined);
 
 export const QuizProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    const { user } = useAuth();
     const [session, setSession] = useState<QuizSession | null>(null);
     const [answers, setAnswers] = useState<Record<string, string>>({});
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -67,30 +72,48 @@ export const QuizProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (!session) return;
         setIsLoading(true);
 
-        try {
-            let correct = 0;
-            Object.entries(answers).forEach(([qId, selectedOption]) => {
-                const q = questions.find(mq => mq.id_question === qId);
-                if (q) {
-                    const correctOptions = q.correst_ans.split(',').map(s => s.trim());
-                    if (correctOptions.includes(selectedOption)) {
-                        correct++;
-                    }
+        let correct = 0;
+        const wrongAnswersList: any[] = [];
+        Object.entries(answers).forEach(([qId, selectedOption]) => {
+            const q = questions.find(mq => mq.id_question.toString() === qId);
+            if (q) {
+                const correctOptions = q.correst_ans.split(',').map(s => s.trim());
+                if (correctOptions.includes(selectedOption)) {
+                    correct++;
+                } else {
+                    // Collect wrong answer details
+                    wrongAnswersList.push({
+                        question: q,
+                        selected_answer: selectedOption,
+                        correct_answer: q.correst_ans
+                    });
                 }
-            });
+            }
+        });
 
-            const completedSession: QuizSession = {
-                ...session,
-                status: 'completed',
-                correct_answers: correct,
-                completed_at: new Date().toISOString()
-            };
+        const completedSession: QuizSession = {
+            ...session,
+            status: 'completed',
+            correct_answers: correct,
+            completed_at: new Date().toISOString(),
+            wrong_answers: wrongAnswersList
+        };
 
+        // Skip DB save ONLY if it is the MOCK user ID (i.e. user not logged in)
+        if (session.id_user === MOCK_USER_ID) {
+            console.warn('Mock user - skipping save');
+            setSession(completedSession);
+            setIsFinished(true);
+            setIsLoading(false);
+            return;
+        }
+
+        try {
             // Save to Supabase
+            // Removing 'id' to let DB generate it (Identity column or UUID)
             const { error } = await supabase
                 .from('quiz_sessions')
-                .upsert({
-                    id: session.id,
+                .insert({
                     id_user: session.id_user,
                     total_questions: session.total_questions,
                     correct_answers: correct,
@@ -99,20 +122,65 @@ export const QuizProvider: React.FC<{ children: React.ReactNode }> = ({ children
                     status: 'completed',
                     quiz_settings: session.quiz_settings,
                     shuffled_options: session.shuffled_options,
-                    completed_at: completedSession.completed_at
+                    completed_at: completedSession.completed_at,
+                    wrong_answers: wrongAnswersList
                 });
 
             if (error) throw error;
 
             setSession(completedSession);
             setIsFinished(true);
-        } catch (error) {
+        } catch (error: any) {
             console.error('Error finishing quiz:', error);
-            alert('Có lỗi xảy ra khi lưu kết quả bài thi.');
+
+            // Handle FK violation (missing profile)
+            if (error.code === '23503' && user) {
+                console.log('Profile missing. Attempting to create profile and retry...');
+                try {
+                    const { error: profileError } = await supabase
+                        .from('profiles')
+                        .insert([{
+                            id_user: user.id,
+                            user_email: user.email,
+                            user_name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
+                            is_active: true,
+                            user_role: 'student'
+                        }]);
+
+                    if (!profileError) {
+                        // Retry saving quiz result
+                        const { error: retryError } = await supabase
+                            .from('quiz_sessions')
+                            .insert({
+                                id_user: session.id_user,
+                                total_questions: session.total_questions,
+                                correct_answers: correct,
+                                time_elapsed_seconds: session.time_elapsed_seconds,
+                                remaining_hints: session.remaining_hints,
+                                status: 'completed',
+                                quiz_settings: session.quiz_settings,
+                                shuffled_options: session.shuffled_options,
+                                completed_at: completedSession.completed_at
+                            });
+
+                        if (!retryError) {
+                            setSession(completedSession);
+                            setIsFinished(true);
+                            return; // Success on retry
+                        }
+                    } else {
+                        console.error('Failed to create profile on recovery:', profileError);
+                    }
+                } catch (retryErr) {
+                    console.error('Error during self-healing:', retryErr);
+                }
+            }
+
+            alert('Có lỗi xảy ra khi lưu kết quả bài thi: ' + (error.message || JSON.stringify(error)));
         } finally {
             setIsLoading(false);
         }
-    }, [session, answers, questions]);
+    }, [session, answers, questions, user]);
 
     // Timer logic
     useEffect(() => {
@@ -130,29 +198,90 @@ export const QuizProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const startQuiz = async (settings: QuizSettings) => {
         setIsLoading(true);
         try {
-            const { data: fetchedQuestions, error } = await supabase
+            // 1. Fetch ALL valid questions for the selected lessons (no limit)
+            const { data: allQuestionsData, error } = await supabase
                 .from('questions')
                 .select('*')
-                .in('id_lesson', settings.lesson_ids)
-                .limit(settings.question_count);
+                .in('id_lesson', settings.lesson_ids);
 
             if (error) throw error;
-            if (!fetchedQuestions || fetchedQuestions.length === 0) {
+
+            if (!allQuestionsData || allQuestionsData.length === 0) {
                 alert('Không tìm thấy câu hỏi cho các bài học đã chọn.');
+                setIsLoading(false);
                 return;
             }
 
-            const totalQ = fetchedQuestions.length;
+            // 2. Algorithm: Ensure at least one question per lesson (if available) + Random fill
+            const questionsByLesson: Record<string, Question[]> = {};
+            // Initialize groups
+            settings.lesson_ids.forEach(lId => {
+                questionsByLesson[lId] = [];
+            });
+
+            // Categorize questions
+            (allQuestionsData as Question[]).forEach(q => {
+                // Only consider questions belonging to requested lessons (double check)
+                if (questionsByLesson[q.id_lesson]) {
+                    questionsByLesson[q.id_lesson].push(q);
+                }
+            });
+
+            let finalSelection: Question[] = [];
+            let remainingPool: Question[] = [];
+
+            // Step 2a: Pick one random question from each lesson group first
+            Object.values(questionsByLesson).forEach(lessonQs => {
+                if (lessonQs.length > 0) {
+                    const shuffledLessonQs = shuffleArray(lessonQs);
+                    // Add the first one to guarantee coverage
+                    finalSelection.push(shuffledLessonQs[0]);
+                    // Add the rest to the general pool
+                    for (let i = 1; i < shuffledLessonQs.length; i++) {
+                        remainingPool.push(shuffledLessonQs[i]);
+                    }
+                }
+            });
+
+            // Step 2b: Fill the remaining quota from the pool
+            const questionsNeeded = settings.question_count - finalSelection.length;
+            if (questionsNeeded > 0) {
+                // Shuffle pool for randomness
+                const shuffledPool = shuffleArray(remainingPool);
+                // Take needed amount (or all if not enough)
+                const additional = shuffledPool.slice(0, questionsNeeded);
+                finalSelection = [...finalSelection, ...additional];
+            } else if (questionsNeeded < 0) {
+                // Case: User asked for fewer questions than selected lessons
+                // Randomly trim the forced selection to match count
+                finalSelection = shuffleArray(finalSelection).slice(0, settings.question_count);
+            }
+
+            // Step 2c: Final Shuffle (Requirement 3: Random order)
+            // Ensure the final list is not sorted by lesson
+            const selectedQuestions = shuffleArray(finalSelection);
+
+            const totalQ = selectedQuestions.length;
+            if (totalQ === 0) {
+                alert('Không đủ câu hỏi để tạo bài thi (Số lượng: 0).');
+                setIsLoading(false);
+                return;
+            }
+
+            // 3. Create Session
             const initialHints = Math.floor(totalQ / 10) || 1;
 
             const shuffledMap: Record<string, string[]> = {};
-            (fetchedQuestions as Question[]).forEach((q: Question) => {
+            selectedQuestions.forEach((q: Question) => {
                 shuffledMap[q.id_question] = shuffleArray(['1', '2', '3', '4']);
             });
 
+            // Use real user ID if logged in, otherwise use MOCK_USER_ID
+            const userId = user?.id || MOCK_USER_ID;
+
             const newSession: QuizSession = {
-                id: Math.random().toString(36).substr(2, 9),
-                id_user: 'mock-user',
+                id: Math.floor(Math.random() * 1000000), // Updated to integer ID logic temporarily or fix schema mismatch later
+                id_user: userId, // Use the valid UUID const
                 total_questions: totalQ,
                 correct_answers: 0,
                 time_elapsed_seconds: 0,
@@ -165,7 +294,8 @@ export const QuizProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 shuffled_options: shuffledMap
             };
 
-            setQuestions(fetchedQuestions);
+            // Important: Set questions state to the randomized list
+            setQuestions(selectedQuestions);
             setSession(newSession);
             setAnswers({});
             setCurrentQuestionIndex(0);
@@ -201,6 +331,39 @@ export const QuizProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
     };
 
+    const resetQuiz = useCallback(() => {
+        setSession(null);
+        setAnswers({});
+        setCurrentQuestionIndex(0);
+        setTimeLeft(0);
+        setIsFinished(false);
+        setQuestions([]);
+    }, []);
+
+    const loadSession = useCallback((historySession: QuizSession) => {
+        setSession(historySession);
+
+        // Populate state from correct/wrong answers logic
+        // Since we only store wrong answers, we can reconstruct a partial state
+        // Questions array will contain only the wrong questions
+        if (historySession.wrong_answers && Array.isArray(historySession.wrong_answers)) {
+            const restoredQuestions = historySession.wrong_answers.map((w: any) => w.question);
+            const restoredAnswers: Record<string, string> = {};
+            historySession.wrong_answers.forEach((w: any) => {
+                restoredAnswers[w.question.id_question.toString()] = w.selected_answer;
+            });
+
+            setQuestions(restoredQuestions);
+            setAnswers(restoredAnswers);
+        } else {
+            // Fallback for old sessions without detailed history
+            setQuestions([]);
+            setAnswers({});
+        }
+
+        setIsFinished(true); // Treat as finished
+    }, []);
+
     return (
         <QuizContext.Provider value={{
             session,
@@ -208,6 +371,8 @@ export const QuizProvider: React.FC<{ children: React.ReactNode }> = ({ children
             currentQuestionIndex,
             timeLeft,
             startQuiz,
+            resetQuiz,
+            loadSession,
             submitAnswer,
             nextQuestion,
             prevQuestion,

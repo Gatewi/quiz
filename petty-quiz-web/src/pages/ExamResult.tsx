@@ -1,12 +1,18 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useQuiz } from '../context/QuizContext';
-import type { Question } from '../types';
+
 
 const ExamResult: React.FC = () => {
-    const { session, answers, questions } = useQuiz();
+    const { session, answers, questions, resetQuiz } = useQuiz();
+    const navigate = useNavigate();
 
-    if (!session || session.status !== 'completed' || questions.length === 0) {
+    const handleNewExam = () => {
+        resetQuiz();
+        navigate('/');
+    };
+
+    if (!session || session.status !== 'completed') {
         return (
             <div className="bg-background-light dark:bg-background-dark text-[#111318] dark:text-white min-h-screen flex flex-col items-center justify-center font-display">
                 <p className="text-xl">Không tìm thấy kết quả bài thi.</p>
@@ -25,13 +31,16 @@ const ExamResult: React.FC = () => {
         return '';
     };
 
-    // Find wrong answers
-    const results = Object.entries(answers).map(([qId, oId]) => {
-        const q = questions.find(mq => mq.id_question === qId);
+    // Find wrong answers (Only if questions are available)
+    const wrongAnswers = questions.length > 0 ? Object.entries(answers).map(([qId, oId]) => {
+        // Fix: Convert ID to string for comparison
+        const q = questions.find(mq => mq.id_question.toString() === qId);
         if (!q) return null;
 
         const correctOptions = q.correst_ans.split(',').map(s => s.trim());
         const isCorrect = correctOptions.includes(oId);
+
+        if (isCorrect) return null;
 
         return {
             id_question: q.id_question,
@@ -41,9 +50,7 @@ const ExamResult: React.FC = () => {
             explanation: q.hint,
             isCorrect
         };
-    }).filter(Boolean);
-
-    const wrongAnswers = results.filter(r => r && !r.isCorrect);
+    }).filter(Boolean) : [];
 
     return (
         <div className="bg-background-light dark:bg-background-dark text-[#111318] dark:text-white min-h-screen flex flex-col font-display">
@@ -89,20 +96,37 @@ const ExamResult: React.FC = () => {
                                 <span className="material-symbols-outlined group-hover:-translate-x-1 transition-transform">arrow_back</span>
                                 Trang chủ
                             </Link>
-                            <Link className="flex-1 flex items-center justify-center h-12 rounded-lg bg-primary hover:bg-primary-hover text-white font-bold shadow-lg shadow-primary/25 transition-all gap-2 group" to="/exam">
+                            <button
+                                onClick={handleNewExam}
+                                className="flex-1 flex items-center justify-center h-12 rounded-lg bg-primary hover:bg-primary-hover text-white font-bold shadow-lg shadow-primary/25 transition-all gap-2 group cursor-pointer"
+                            >
                                 <span className="material-symbols-outlined group-hover:rotate-180 transition-transform">refresh</span>
                                 Làm bài mới
-                            </Link>
+                            </button>
                         </div>
                     </div>
                     {/* Wrong Answers List */}
-                    {wrongAnswers.length > 0 && (
+                    {questions.length === 0 ? (
+                        session.correct_answers === session.total_questions ? (
+                            <div className="p-8 bg-green-500/10 border border-green-500/20 rounded-xl text-center flex flex-col items-center gap-3">
+                                <div className="size-16 rounded-full bg-green-100 dark:bg-green-500/20 flex items-center justify-center mb-2">
+                                    <span className="material-symbols-outlined text-green-600 dark:text-green-400 text-3xl">emoji_events</span>
+                                </div>
+                                <h3 className="text-xl font-bold text-green-700 dark:text-green-400">Xuất sắc!</h3>
+                                <p className="text-green-600 dark:text-green-300">Bạn đã trả lời đúng tất cả các câu hỏi. Tuyệt vời!</p>
+                            </div>
+                        ) : (
+                            <div className="p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg text-center text-yellow-500">
+                                Không có dữ liệu chi tiết câu hỏi cho bài thi này (bài thi cũ).
+                            </div>
+                        )
+                    ) : wrongAnswers.length > 0 && (
                         <div className="flex flex-col gap-6 mt-8">
                             <div className="flex items-center gap-3">
                                 <div className="h-8 w-1 bg-red-500 rounded-full"></div>
                                 <h3 className="text-xl font-bold text-[#111318] dark:text-white">Danh sách câu trả lời sai ({wrongAnswers.length})</h3>
                             </div>
-                            {wrongAnswers.map((wa, idx) => (
+                            {wrongAnswers.map((wa: any, idx) => (
                                 <div key={idx} className="flex flex-col rounded-xl bg-white dark:bg-surface-dark border border-[#e5e7eb] dark:border-transparent overflow-hidden">
                                     <div className="p-6 border-b border-[#e5e7eb] dark:border-[#3b4354]">
                                         <div className="flex items-start gap-3 mb-4">

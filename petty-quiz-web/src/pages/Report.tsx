@@ -1,34 +1,79 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { mockUserProfile } from '../data/mock';
+import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../utils/supabase';
 import type { QuizSession } from '../types';
+import { useAuth } from '../context/AuthContext';
+import { useQuiz } from '../context/QuizContext';
 
 const Report: React.FC = () => {
+    const { user, profile } = useAuth();
+    const { loadSession } = useQuiz();
+    const navigate = useNavigate();
+
     const [history, setHistory] = useState<QuizSession[]>([]);
+    const [subjectsMap, setSubjectsMap] = useState<Record<string, string>>({});
     const [isLoading, setIsLoading] = useState(true);
 
+    // Default Date Range: Last 7 days
+    const [startDate, setStartDate] = useState<string>(() => {
+        const d = new Date();
+        d.setDate(d.getDate() - 7);
+        return d.toISOString().split('T')[0];
+    });
+    const [endDate, setEndDate] = useState<string>(() => new Date().toISOString().split('T')[0]);
+
     useEffect(() => {
-        const fetchHistory = async () => {
+        const fetchData = async () => {
+            if (!user) return;
             setIsLoading(true);
             try {
-                const { data, error } = await supabase
+                // Fetch Subjects
+                const { data: subjectsData } = await supabase.from('subjects').select('id_subject, subject_name');
+                const sMap: Record<string, string> = {};
+                if (subjectsData) {
+                    subjectsData.forEach((s: any) => {
+                        sMap[s.id_subject] = s.subject_name;
+                    });
+                }
+                setSubjectsMap(sMap);
+
+                // Fetch History
+                let query = supabase
                     .from('quiz_sessions')
                     .select('*')
-                    .eq('id_user', 'mock-user') // Temporary using mock-user ID
+                    .eq('id_user', user.id)
                     .order('started_at', { ascending: false });
+
+                // Apply Date Filter
+                if (startDate) {
+                    const start = new Date(startDate);
+                    start.setHours(0, 0, 0, 0); // Start of day
+                    query = query.gte('started_at', start.toISOString());
+                }
+                if (endDate) {
+                    const end = new Date(endDate);
+                    end.setHours(23, 59, 59, 999); // End of day
+                    query = query.lte('started_at', end.toISOString());
+                }
+
+                const { data, error } = await query;
 
                 if (error) throw error;
                 if (data) setHistory(data);
             } catch (error) {
-                console.error('Error fetching history:', error);
+                console.error('Error fetching data:', error);
             } finally {
                 setIsLoading(false);
             }
         };
 
-        fetchHistory();
-    }, []);
+        fetchData();
+    }, [user, startDate, endDate]);
+
+    const handleReview = (session: QuizSession) => {
+        loadSession(session);
+        navigate('/exam-result');
+    };
 
     // Stats Calculation
     const completedQuizzes = history.filter(s => s.status === 'completed');
@@ -43,8 +88,21 @@ const Report: React.FC = () => {
         const subAvg = subQuizzes.length > 0
             ? Math.round(subQuizzes.reduce((acc, s) => acc + (s.correct_answers / s.total_questions), 0) / subQuizzes.length * 100)
             : 0;
-        return { name: subId.toUpperCase(), pct: subAvg, count: subQuizzes.length };
+        return {
+            id: subId,
+            name: subjectsMap[subId] || subId.toUpperCase(),
+            pct: subAvg,
+            count: subQuizzes.length
+        };
     }).sort((a, b) => b.pct - a.pct);
+
+    if (!user) {
+        return (
+            <div className="flex items-center justify-center h-screen bg-background-light dark:bg-background-dark text-slate-900 dark:text-white">
+                <Link to="/login" className="text-primary hover:underline">Vui lòng đăng nhập để xem báo cáo</Link>
+            </div>
+        );
+    }
 
     return (
         <div className="flex h-[calc(100vh-64px)] w-full flex-row bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display overflow-hidden">
@@ -58,8 +116,8 @@ const Report: React.FC = () => {
                                 <span className="material-symbols-outlined text-primary">person</span>
                             </div>
                             <div className="flex flex-col overflow-hidden">
-                                <h1 className="text-white text-base font-medium leading-normal truncate">{mockUserProfile.user_name}</h1>
-                                <p className="text-text-secondary text-xs font-normal leading-normal">XP: {mockUserProfile.xp_points}</p>
+                                <h1 className="text-white text-base font-medium leading-normal truncate">{profile?.user_name || user.email}</h1>
+                                <p className="text-text-secondary text-xs font-normal leading-normal">User Reports</p>
                             </div>
                         </div>
                         {/* Navigation */}
@@ -72,10 +130,6 @@ const Report: React.FC = () => {
                                 <span className="material-symbols-outlined text-primary" style={{ fontSize: '24px' }}>bar_chart</span>
                                 <p className="text-primary text-sm font-medium leading-normal">Báo cáo</p>
                             </Link>
-                            <a className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-[#282e39] transition-colors group" href="#">
-                                <span className="material-symbols-outlined text-text-secondary group-hover:text-white" style={{ fontSize: '24px' }}>calendar_today</span>
-                                <p className="text-text-secondary group-hover:text-white text-sm font-medium leading-normal">Lịch thi</p>
-                            </a>
                         </nav>
                     </div>
                     <div className="px-2">
@@ -93,11 +147,29 @@ const Report: React.FC = () => {
                             <h1 className="text-white text-3xl font-black leading-tight tracking-[-0.033em]">Báo cáo kết quả</h1>
                             <p className="text-text-secondary text-sm mt-1">Theo dõi tiến độ và lịch sử làm bài của bạn</p>
                         </div>
+
+                        {/* Date Filter Controls */}
                         <div className="flex flex-wrap items-end gap-3 w-full xl:w-auto">
+                            <div className="flex items-center gap-2">
+                                <span className="text-text-secondary text-sm">Từ:</span>
+                                <input
+                                    type="date"
+                                    value={startDate}
+                                    onChange={(e) => setStartDate(e.target.value)}
+                                    className="bg-[#282e39] text-white border border-[#3b4354] rounded px-2 py-1 text-sm focus:outline-none focus:border-primary"
+                                />
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <span className="text-text-secondary text-sm">Đến:</span>
+                                <input
+                                    type="date"
+                                    value={endDate}
+                                    onChange={(e) => setEndDate(e.target.value)}
+                                    className="bg-[#282e39] text-white border border-[#3b4354] rounded px-2 py-1 text-sm focus:outline-none focus:border-primary"
+                                />
+                            </div>
+
                             <div className="flex gap-3 mt-4 xl:mt-0 flex-1 xl:flex-none justify-end">
-                                <Link to="/" className="flex items-center justify-center rounded-lg h-10 px-5 bg-[#282e39] hover:bg-[#323946] text-white text-sm font-bold tracking-[0.015em] transition-colors whitespace-nowrap">
-                                    Trang chủ
-                                </Link>
                                 <Link to="/" className="flex items-center justify-center rounded-lg h-10 px-5 bg-primary hover:bg-blue-600 text-white text-sm font-bold tracking-[0.015em] shadow-lg shadow-primary/20 transition-all whitespace-nowrap">
                                     <span className="material-symbols-outlined mr-2 text-[20px]">add_circle</span>
                                     Làm bài thi mới
@@ -149,13 +221,13 @@ const Report: React.FC = () => {
                                     <div className="flex flex-col gap-5 flex-1 justify-center">
                                         {subjectStats.length > 0 ? (
                                             subjectStats.map((item) => (
-                                                <div key={item.name} className="flex flex-col gap-2">
+                                                <div key={item.id} className="flex flex-col gap-2">
                                                     <div className="flex justify-between text-sm">
                                                         <span className="text-white font-medium">{item.name}</span>
                                                         <span className="text-text-secondary">{item.pct}% ({item.count} bài)</span>
                                                     </div>
                                                     <div className="w-full bg-[#111318] rounded-full h-2.5">
-                                                        <div className={`bg-primary h-2.5 rounded-full`} style={{ width: `${item.pct}%` }}></div>
+                                                        <div className="bg-primary h-2.5 rounded-full" style={{ width: `${item.pct}%` }}></div>
                                                     </div>
                                                 </div>
                                             ))
@@ -181,9 +253,9 @@ const Report: React.FC = () => {
                                                 <tr>
                                                     <th className="p-4 text-xs font-semibold text-text-secondary uppercase tracking-wider w-[25%]">Thời gian</th>
                                                     <th className="p-4 text-xs font-semibold text-text-secondary uppercase tracking-wider w-[25%]">Môn học</th>
-                                                    <th className="p-4 text-xs font-semibold text-text-secondary uppercase tracking-wider text-center w-[15%]">Số câu</th>
-                                                    <th className="p-4 text-xs font-semibold text-text-secondary uppercase tracking-wider text-center w-[15%]">Kết quả</th>
-                                                    <th className="p-4 text-xs font-semibold text-text-secondary uppercase tracking-wider text-right w-[20%]">Trạng thái</th>
+                                                    <th className="p-4 text-xs font-semibold text-text-secondary uppercase tracking-wider text-center w-[15%]">Kết quả (Đúng/Tổng)</th>
+                                                    <th className="p-4 text-xs font-semibold text-text-secondary uppercase tracking-wider text-center w-[15%]">Tỷ lệ</th>
+                                                    <th className="p-4 text-xs font-semibold text-text-secondary uppercase tracking-wider text-right w-[20%]">Ghi chú</th>
                                                 </tr>
                                             </thead>
                                             <tbody className="divide-y divide-surface-border">
@@ -199,11 +271,13 @@ const Report: React.FC = () => {
                                                             <td className="p-4">
                                                                 <div className="flex items-center gap-2">
                                                                     <div className={`size-2 rounded-full ${row.status === 'completed' ? 'bg-primary' : 'bg-yellow-500'}`}></div>
-                                                                    <span className="text-white text-sm">{row.quiz_settings.id_subject.toUpperCase()} - {row.quiz_settings.id_grade}</span>
+                                                                    <span className="text-white text-sm">
+                                                                        {subjectsMap[row.quiz_settings?.id_subject] || row.quiz_settings?.id_subject?.toUpperCase() || 'N/A'}
+                                                                    </span>
                                                                 </div>
                                                             </td>
                                                             <td className="p-4 text-center">
-                                                                <span className="text-text-secondary text-sm">{row.total_questions}</span>
+                                                                <span className="text-text-secondary text-sm font-bold">{row.status === 'completed' ? `${row.correct_answers}/${row.total_questions}` : '-'}</span>
                                                             </td>
                                                             <td className="p-4 text-center">
                                                                 <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${row.status === 'completed' ? 'bg-green-500/10 text-green-400' : 'bg-yellow-500/10 text-yellow-500'}`}>
@@ -211,7 +285,16 @@ const Report: React.FC = () => {
                                                                 </span>
                                                             </td>
                                                             <td className="p-4 text-right">
-                                                                <span className="text-xs text-text-secondary uppercase font-bold tracking-wider">{row.status}</span>
+                                                                {row.status === 'completed' ? (
+                                                                    <button
+                                                                        onClick={() => handleReview(row)}
+                                                                        className="text-xs text-primary font-bold hover:underline"
+                                                                    >
+                                                                        Xem lại
+                                                                    </button>
+                                                                ) : (
+                                                                    <span className="text-xs text-text-secondary uppercase font-bold tracking-wider">{row.status}</span>
+                                                                )}
                                                             </td>
                                                         </tr>
                                                     ))

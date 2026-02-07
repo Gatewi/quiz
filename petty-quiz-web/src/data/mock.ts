@@ -1,8 +1,10 @@
 
 import type { Subject, Lesson, Question, Grade, Profile } from '../types';
 
+export const MOCK_USER_ID = '00000000-0000-0000-0000-000000000000';
+
 export const mockUserProfile: Profile = {
-    id_user: 'mock-user',
+    id_user: MOCK_USER_ID,
     user_name: 'Trần Minh Hải',
     user_email: 'hai.tm@example.com',
     is_verified: true,
@@ -20,23 +22,23 @@ export const mockGrades: Grade[] = [
 ];
 
 export const mockSubjects: Subject[] = [
-    { id_subject: 's1', subject_name: 'Toán học', slug: 'toan-hoc', color_theme: '#135bec', icon_name: 'calculate' },
-    { id_subject: 's2', subject_name: 'Ngữ văn', slug: 'ngu-van', color_theme: '#e11d48', icon_name: 'menu_book' },
-    { id_subject: 's3', subject_name: 'Tiếng Anh', slug: 'tieng-anh', color_theme: '#0ea5e9', icon_name: 'translate' },
-    { id_subject: 's4', subject_name: 'Vật lý', slug: 'vat-ly', color_theme: '#8b5cf6', icon_name: 'bolt' },
-    { id_subject: 's5', subject_name: 'Hóa học', slug: 'hoa-hoc', color_theme: '#10b981', icon_name: 'science' },
+    { id_subject: 's1', subject_name: 'Toán học' },
+    { id_subject: 's2', subject_name: 'Ngữ văn' },
+    { id_subject: 's3', subject_name: 'Tiếng Anh' },
+    { id_subject: 's4', subject_name: 'Vật lý' },
+    { id_subject: 's5', subject_name: 'Hóa học' },
 ];
 
 export const mockLessons: Lesson[] = [
-    { id_lesson: 'l1', id_subject: 's1', id_grade: 'g12', lesson_name: 'Chương 1: Khối đa diện', order_index: 1 },
-    { id_lesson: 'l2', id_subject: 's1', id_grade: 'g12', lesson_name: 'Chương 2: Mặt nón, mặt trụ, mặt cầu', order_index: 2 },
-    { id_lesson: 'l3', id_subject: 's3', id_grade: 'g12', lesson_name: 'Unit 1: Life Stories', order_index: 1 },
-    { id_lesson: 'l4', id_subject: 's3', id_grade: 'g12', lesson_name: 'Unit 2: Urbanisation', order_index: 2 },
+    { id_lesson: 'l1', id_subject: 's1', id_grade: 'g12', lesson_name: 'Chương 1: Khối đa diện', order_index: 1, lesson_active: true },
+    { id_lesson: 'l2', id_subject: 's1', id_grade: 'g12', lesson_name: 'Chương 2: Mặt nón, mặt trụ, mặt cầu', order_index: 2, lesson_active: true },
+    { id_lesson: 'l3', id_subject: 's3', id_grade: 'g12', lesson_name: 'Unit 1: Life Stories', order_index: 1, lesson_active: true },
+    { id_lesson: 'l4', id_subject: 's3', id_grade: 'g12', lesson_name: 'Unit 2: Urbanisation', order_index: 2, lesson_active: false },
 ];
 
 export const mockQuestions: Question[] = [
     {
-        id_question: 'q1',
+        id_question: 1,
         id_subject: 's3',
         id_lesson: 'l3',
         question_name: "Which of the following is a synonym for 'happy' in the context of professional achievement?",
@@ -50,7 +52,7 @@ export const mockQuestions: Question[] = [
         created_at: new Date().toISOString(),
     },
     {
-        id_question: 'q2',
+        id_question: 2,
         id_subject: 's3',
         id_lesson: 'l3',
         question_name: "What is the past participle of the verb 'to choose'?",
@@ -64,7 +66,7 @@ export const mockQuestions: Question[] = [
         created_at: new Date().toISOString(),
     },
     {
-        id_question: 'q3',
+        id_question: 3,
         id_subject: 's3',
         id_lesson: 'l3',
         question_name: "Which sentence is grammatically correct?",
@@ -78,7 +80,7 @@ export const mockQuestions: Question[] = [
         created_at: new Date().toISOString(),
     },
     {
-        id_question: 'q4',
+        id_question: 4,
         id_subject: 's3',
         id_lesson: 'l3',
         question_name: "What does the idiom 'break the ice' mean?",
@@ -92,7 +94,7 @@ export const mockQuestions: Question[] = [
         created_at: new Date().toISOString(),
     },
     {
-        id_question: 'q5',
+        id_question: 5,
         id_subject: 's3',
         id_lesson: 'l3',
         question_name: "Choose the correct preposition: She is interested ___ learning new languages.",
@@ -106,7 +108,7 @@ export const mockQuestions: Question[] = [
         created_at: new Date().toISOString(),
     },
     {
-        id_question: 'q6',
+        id_question: 6,
         id_subject: 's3',
         id_lesson: 'l4',
         question_name: "What is the opposite of 'urbanisation'?",
@@ -120,7 +122,7 @@ export const mockQuestions: Question[] = [
         created_at: new Date().toISOString(),
     },
     {
-        id_question: 'q7',
+        id_question: 7,
         id_subject: 's3',
         id_lesson: 'l4',
         question_name: "Which word is a verb?",
@@ -134,7 +136,7 @@ export const mockQuestions: Question[] = [
         created_at: new Date().toISOString(),
     },
     {
-        id_question: 'q8',
+        id_question: 8,
         id_subject: 's3',
         id_lesson: 'l4',
         question_name: "Complete the sentence: The city ___ a lot in the last decade.",
@@ -148,7 +150,7 @@ export const mockQuestions: Question[] = [
         created_at: new Date().toISOString(),
     },
     {
-        id_question: 'q9',
+        id_question: 9,
         id_subject: 's3',
         id_lesson: 'l4',
         question_name: "What is a 'megacity'?",
@@ -162,7 +164,7 @@ export const mockQuestions: Question[] = [
         created_at: new Date().toISOString(),
     },
     {
-        id_question: 'q10',
+        id_question: 10,
         id_subject: 's3',
         id_lesson: 'l4',
         question_name: "Which word means 'crowded and dirty living conditions'?",
@@ -174,5 +176,5 @@ export const mockQuestions: Question[] = [
         hint: "'Slum' (khu ổ chuột) dùng để chỉ các khu vực đô thị đông đúc, bẩn thỉu với điều kiện nhà ở và sinh hoạt kém.",
         difficulty: 'hard',
         created_at: new Date().toISOString(),
-    },
+    }
 ];

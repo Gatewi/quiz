@@ -9,20 +9,20 @@ INSERT INTO public.grades (id_grade, grade_name, grade_node) VALUES
 ON CONFLICT (id_grade) DO NOTHING;
 
 -- 2. Insert Subjects
-INSERT INTO public.subjects (id_subject, subject_name, slug, color_theme, icon_name) VALUES
-('s1', 'Toán học', 'toan-hoc', '#135bec', 'calculate'),
-('s2', 'Ngữ văn', 'ngu-van', '#e11d48', 'menu_book'),
-('s3', 'Tiếng Anh', 'tieng-anh', '#0ea5e9', 'translate'),
-('s4', 'Vật lý', 'vat-ly', '#8b5cf6', 'bolt'),
-('s5', 'Hóa học', 'hoa-hoc', '#10b981', 'science')
+INSERT INTO public.subjects (id_subject, subject_name) VALUES
+('s1', 'Toán học'),
+('s2', 'Ngữ văn'),
+('s3', 'Tiếng Anh'),
+('s4', 'Vật lý'),
+('s5', 'Hóa học')
 ON CONFLICT (id_subject) DO NOTHING;
 
 -- 3. Insert Lessons (Using Text IDs)
-INSERT INTO public.lessons (id_lesson, id_subject, id_grade, lesson_name, order_index) VALUES
-('l_g12_s1_c1', 's1', 'g12', 'Chương 1: Khối đa diện', 1),
-('l_g12_s1_c2', 's1', 'g12', 'Chương 2: Mặt nón, mặt trụ, mặt cầu', 2),
-('l_g12_s3_u1', 's3', 'g12', 'Unit 1: Life Stories', 1),
-('l_g12_s3_u2', 's3', 'g12', 'Unit 2: Urbanisation', 2)
+INSERT INTO public.lessons (id_lesson, id_subject, id_grade, lesson_name, order_index, lesson_active) VALUES
+('l_g12_s1_c1', 's1', 'g12', 'Chương 1: Khối đa diện', 1, true),
+('l_g12_s1_c2', 's1', 'g12', 'Chương 2: Mặt nón, mặt trụ, mặt cầu', 2, true),
+('l_g12_s3_u1', 's3', 'g12', 'Unit 1: Life Stories', 1, true),
+('l_g12_s3_u2', 's3', 'g12', 'Unit 2: Urbanisation', 2, false)
 ON CONFLICT (id_lesson) DO NOTHING;
 
 -- 4. Insert Questions (Updated with new Lesson IDs)

@@ -4,8 +4,11 @@ import { useQuiz } from '../context/QuizContext';
 import { mockUserProfile } from '../data/mock';
 import type { GradeId, SubjectId } from '../types';
 
+import { useAuth } from '../context/AuthContext';
+
 const Home: React.FC = () => {
     const navigate = useNavigate();
+    const { user } = useAuth();
     const { startQuiz, grades, subjects, lessons, isLoading } = useQuiz();
 
     // States aligned with new schema
@@ -22,11 +25,24 @@ const Home: React.FC = () => {
         : lessons.filter(lesson =>
             lesson.id_grade === selectedGradeId &&
             lesson.id_subject === selectedSubjectId
-        );
+        ).sort((a, b) => a.order_index - b.order_index);
 
     // Calculate active IDs based on actual lesson content
     const activeGradeIds = new Set(lessons.map(l => l.id_grade));
     const activeSubjectIds = new Set(lessons.map(l => l.id_subject));
+
+    // Update selected lessons when filters change
+    useEffect(() => {
+        if (filteredLessons.length > 0) {
+            // Select lessons that have lesson_active = true by default
+            const activeLessons = filteredLessons
+                .filter(l => l.lesson_active)
+                .map(l => l.id_lesson);
+            setSelectedLessonIds(activeLessons);
+        } else {
+            setSelectedLessonIds([]);
+        }
+    }, [selectedGradeId, selectedSubjectId, lessons]);
 
     // Check for user message on "login"
     useEffect(() => {
@@ -126,7 +142,6 @@ const Home: React.FC = () => {
                         value={selectedGradeId}
                         onChange={(e) => {
                             setSelectedGradeId(e.target.value as GradeId);
-                            setSelectedLessonIds([]); // Reset lessons on change
                         }}
                     >
                         <option value="">Chọn trình độ</option>
@@ -144,7 +159,6 @@ const Home: React.FC = () => {
                         value={selectedSubjectId}
                         onChange={(e) => {
                             setSelectedSubjectId(e.target.value as SubjectId);
-                            setSelectedLessonIds([]); // Reset lessons on change
                         }}
                     >
                         <option value="">Chọn môn học</option>
@@ -218,12 +232,23 @@ const Home: React.FC = () => {
                 <div className="lg:w-1/3 flex flex-col gap-6 pt-2">
                     <div className="bg-surface-dark p-6 rounded-2xl border border-border-dark flex flex-col items-start gap-4 shadow-lg">
                         <button
-                            className={`w-full h-16 bg-primary hover:bg-primary-hover text-white text-xl font-bold rounded-xl shadow-lg shadow-primary/20 transition-all active:scale-[0.98] flex items-center justify-center gap-3 ${!isCreateEnabled ? 'opacity-40 cursor-not-allowed grayscale' : ''}`}
-                            disabled={!isCreateEnabled}
-                            onClick={handleCreateQuiz}
+                            className={`w-full h-16 bg-primary hover:bg-primary-hover text-white text-xl font-bold rounded-xl shadow-lg shadow-primary/20 transition-all active:scale-[0.98] flex items-center justify-center gap-3 ${!user ? '' : (!isCreateEnabled ? 'opacity-40 cursor-not-allowed grayscale' : '')}`}
+                            disabled={!!user && !isCreateEnabled}
+                            onClick={() => {
+                                if (!user) {
+                                    navigate('/login');
+                                } else {
+                                    handleCreateQuiz();
+                                }
+                            }}
                         >
                             {isLoading ? (
                                 <div className="animate-spin size-6 border-2 border-white border-t-transparent rounded-full"></div>
+                            ) : !user ? (
+                                <>
+                                    <span>Đăng nhập để bắt đầu</span>
+                                    <span className="material-symbols-outlined">login</span>
+                                </>
                             ) : (
                                 <>
                                     <span>Tạo bài kiểm tra</span>

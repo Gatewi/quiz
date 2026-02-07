@@ -104,12 +104,31 @@ const Report: React.FC = () => {
         } else if (key === 'started_at') {
             aValue = new Date(a.started_at).getTime();
             bValue = new Date(b.started_at).getTime();
+        } else if (key === 'duration') {
+            const getDuration = (s: QuizSession) => {
+                if (s.time_elapsed_seconds) return s.time_elapsed_seconds;
+                if (s.status === 'completed' && s.started_at && s.completed_at) {
+                    const diff = (new Date(s.completed_at).getTime() - new Date(s.started_at).getTime()) / 1000;
+                    return Math.max(0, diff);
+                }
+                return 0;
+            };
+            aValue = getDuration(a);
+            bValue = getDuration(b);
         }
 
         if (aValue < bValue) return direction === 'asc' ? -1 : 1;
         if (aValue > bValue) return direction === 'asc' ? 1 : -1;
         return 0;
     });
+
+    const formatDuration = (seconds: number) => {
+        if (!seconds || seconds < 0) return '00:00';
+        const totalSeconds = Math.round(seconds);
+        const m = Math.floor(totalSeconds / 60);
+        const s = totalSeconds % 60;
+        return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    };
 
     const getSortIcon = (key: string) => {
         if (sortConfig.key !== key) return <span className="material-symbols-outlined text-[16px] text-text-secondary/30">unfold_more</span>;
@@ -253,8 +272,15 @@ const Report: React.FC = () => {
                             )}
                         </div>
 
-                        {/* Empty 3rd column for balance */}
-                        <div className="xl:col-span-1"></div>
+                        {/* Right Column: New, for Action Button */}
+                        <div className="xl:col-span-1 flex justify-end">
+                            {activeTab === 'report' && (
+                                <Link to="/" className="bg-primary hover:bg-primary-hover text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2 font-medium text-sm shadow-sm shadow-primary/20 hover:scale-105 transform transition-transform" title="Về trang chủ để làm bài mới">
+                                    <span className="material-symbols-outlined text-[20px]">play_circle</span>
+                                    Làm bài mới
+                                </Link>
+                            )}
+                        </div>
                     </div>
                 </header>
 
@@ -367,7 +393,7 @@ const Report: React.FC = () => {
                                                     >
                                                         <div className="flex items-center gap-1">
                                                             {getSortIcon('started_at')}
-                                                            Thời gian
+                                                            Ngày
                                                         </div>
                                                     </th>
                                                     <th
@@ -377,6 +403,15 @@ const Report: React.FC = () => {
                                                         <div className="flex items-center gap-1">
                                                             {getSortIcon('subject_name')}
                                                             Môn học
+                                                        </div>
+                                                    </th>
+                                                    <th
+                                                        className="p-4 text-xs font-semibold text-text-secondary uppercase tracking-wider text-center w-[15%] cursor-pointer hover:bg-white/5 transition-colors select-none"
+                                                        onClick={() => handleSort('duration')}
+                                                    >
+                                                        <div className="flex items-center justify-center gap-1">
+                                                            {getSortIcon('duration')}
+                                                            Thời gian
                                                         </div>
                                                     </th>
                                                     <th
@@ -432,14 +467,26 @@ const Report: React.FC = () => {
                                                                     </div>
                                                                 </td>
                                                                 <td className="p-4 text-center">
+                                                                    <span className="text-white text-sm font-medium">
+                                                                        {(() => {
+                                                                            if (row.status !== 'completed') return '-';
+                                                                            let seconds = row.time_elapsed_seconds;
+                                                                            if (!seconds && row.completed_at && row.started_at) {
+                                                                                seconds = (new Date(row.completed_at).getTime() - new Date(row.started_at).getTime()) / 1000;
+                                                                            }
+                                                                            return formatDuration(Math.max(0, seconds || 0));
+                                                                        })()}
+                                                                    </span>
+                                                                </td>
+                                                                <td className="p-4 text-center">
                                                                     <span className={`text-sm font-bold ${isLowScore ? 'text-red-400' : 'text-text-secondary'}`}>
                                                                         {row.status === 'completed' ? `${row.correct_answers}/${row.total_questions}` : '-'}
                                                                     </span>
                                                                 </td>
                                                                 <td className="p-4 text-center">
                                                                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${row.status === 'completed'
-                                                                            ? (isLowScore ? 'bg-red-500/20 text-red-400' : 'bg-green-500/10 text-green-400')
-                                                                            : 'bg-yellow-500/10 text-yellow-500'
+                                                                        ? (isLowScore ? 'bg-red-500/20 text-red-400' : 'bg-green-500/10 text-green-400')
+                                                                        : 'bg-yellow-500/10 text-yellow-500'
                                                                         }`}>
                                                                         {row.status === 'completed' ? `${Math.round(scoreRatio * 100)}%` : 'Đang làm'}
                                                                     </span>

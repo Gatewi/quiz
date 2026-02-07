@@ -122,6 +122,7 @@ export const QuizProvider: React.FC<{ children: React.ReactNode }> = ({ children
                     status: 'completed',
                     quiz_settings: session.quiz_settings,
                     shuffled_options: session.shuffled_options,
+                    started_at: session.started_at,
                     completed_at: completedSession.completed_at,
                     wrong_answers: wrongAnswersList
                 });
@@ -160,6 +161,7 @@ export const QuizProvider: React.FC<{ children: React.ReactNode }> = ({ children
                                 status: 'completed',
                                 quiz_settings: session.quiz_settings,
                                 shuffled_options: session.shuffled_options,
+                                started_at: session.started_at,
                                 completed_at: completedSession.completed_at
                             });
 

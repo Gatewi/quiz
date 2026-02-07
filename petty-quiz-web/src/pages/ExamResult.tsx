@@ -92,9 +92,9 @@ const ExamResult: React.FC = () => {
                             </div>
                         </div>
                         <div className="flex flex-col sm:flex-row w-full gap-4 mt-2">
-                            <Link className="flex-1 flex items-center justify-center h-12 rounded-lg border border-[#e5e7eb] dark:border-[#3b4354] bg-transparent text-[#111318] dark:text-white hover:bg-gray-100 dark:hover:bg-[#3b4354] font-bold transition-all gap-2 group" to="/">
-                                <span className="material-symbols-outlined group-hover:-translate-x-1 transition-transform">arrow_back</span>
-                                Trang chủ
+                            <Link className="flex-1 flex items-center justify-center h-12 rounded-lg border border-[#e5e7eb] dark:border-[#3b4354] bg-transparent text-[#111318] dark:text-white hover:bg-gray-100 dark:hover:bg-[#3b4354] font-bold transition-all gap-2 group" to="/report">
+                                <span className="material-symbols-outlined group-hover:-translate-x-1 transition-transform">bar_chart</span>
+                                Xem báo cáo
                             </Link>
                             <button
                                 onClick={handleNewExam}

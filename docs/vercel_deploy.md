@@ -52,5 +52,15 @@ Sau khi deploy thành công:
 - Bất cứ khi nào bạn **Git Push** lên nhánh `main`, Vercel sẽ tự động build và cập nhật phiên bản mới nhất cho định website của bạn.
 - Bạn có thể tùy chỉnh tên miền riêng (Custom Domain) trong mục **Settings** -> **Domains**.
 
+## 5. Xử lý sự cố (Troubleshooting)
+
+### Website không cập nhật sau khi Push?
+1. **Kiểm tra trạng thái Build**: Truy cập Vercel Dashboard, chọn Project, xem mục **Deployments**. Nếu trạng thái là `Building` hoặc `Queued`, hãy chờ thêm. Nếu `Error`, xem log để sửa lỗi.
+2. **Xóa Cache trình duyệt**: Nhấn `Ctrl + F5` (Windows) hoặc `Cmd + Shift + R` (Mac) để tải lại trang mới nhất.
+3. **Kiểm tra nhánh**: Đảm bảo bạn đã push lên đúng nhánh `main` (hoặc nhánh được cấu hình Production).
+
+### Lỗi 404 khi load lại trang con?
+- Đảm bảo file `vercel.json` đã tồn tại trong thư mục `petty-quiz-web` với cấu hình rewrites đúng.
+
 ---
 *Chúc mừng! Ứng dụng của bạn hiện đã trực tuyến và sẵn sàng cho người dùng.*

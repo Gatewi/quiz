@@ -13,6 +13,68 @@ erDiagram
     QUIZ_SESSIONS ||--o{ SESSION_ANSWERS : "ghi nhận"
     QUESTIONS ||--o{ SESSION_ANSWERS : "được trả lời"
 
+    PROFILES {
+        uuid id_user PK "Linked to auth.users"
+        string user_name
+        string user_email
+        boolean is_verified
+        boolean is_active
+        string user_role
+        text user_msg
+        int xp_points
+        timestamp created_at
+    }
+
+    GRADES {
+        string id_grade PK
+        string grade_name
+        text grade_node
+    }
+
+    SUBJECTS {
+        string id_subject PK
+        string subject_name
+        text subject_node
+    }
+
+    LESSONS {
+        string id_lesson PK
+        string id_subject FK
+        string id_grade FK
+        string lesson_name
+        string lesson_type1
+        string lesson_type2
+        boolean lesson_active
+        int order_index
+    }
+
+    QUESTIONS {
+        int4 id_question PK
+        string id_subject FK
+        string id_lesson FK
+        text question_name
+        text answer_1
+        text answer_2
+        text answer_3
+        text answer_4
+        string correst_ans
+        text hint
+        enum difficulty
+        timestamp created_at
+    }
+
+    QUIZ_SESSIONS {
+        int4 id PK
+        uuid id_user FK
+        int total_questions
+        int correct_answers
+        int time_elapsed_seconds
+        int remaining_hints
+        int last_question_index
+        enum status
+        timestamp expiration_date
+        jsonb quiz_settings
+        timestamp started_at
         timestamp completed_at
     }
 

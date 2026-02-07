@@ -21,7 +21,6 @@ const Layout: React.FC = () => {
                     <nav className="hidden md:flex items-center gap-1">
                         <Link className="px-4 py-2 text-primary font-semibold text-sm rounded-lg bg-primary/10 transition-colors" to="/">Trang chủ</Link>
                         <Link className="px-4 py-2 text-text-secondary hover:text-white font-medium text-sm rounded-lg hover:bg-white/5 transition-colors" to="/report">Báo cáo</Link>
-                        <Link className="px-4 py-2 text-text-secondary hover:text-white font-medium text-sm rounded-lg hover:bg-white/5 transition-colors" to="/group">Học nhóm</Link>
                         <Link className="px-4 py-2 text-text-secondary hover:text-white font-medium text-sm rounded-lg hover:bg-white/5 transition-colors" to="/guide">Hướng dẫn</Link>
                     </nav>
                     <div className="flex items-center gap-4">

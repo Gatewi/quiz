@@ -39,7 +39,6 @@ export const mockLessons: Lesson[] = [
 export const mockQuestions: Question[] = [
     {
         id_question: 1,
-        id_subject: 's3',
         id_lesson: 'l3',
         question_name: "Which of the following is a synonym for 'happy' in the context of professional achievement?",
         answer_1: 'Content',
@@ -53,7 +52,6 @@ export const mockQuestions: Question[] = [
     },
     {
         id_question: 2,
-        id_subject: 's3',
         id_lesson: 'l3',
         question_name: "What is the past participle of the verb 'to choose'?",
         answer_1: 'Choosed',
@@ -67,7 +65,6 @@ export const mockQuestions: Question[] = [
     },
     {
         id_question: 3,
-        id_subject: 's3',
         id_lesson: 'l3',
         question_name: "Which sentence is grammatically correct?",
         answer_1: 'They has been waiting for hours.',
@@ -81,7 +78,6 @@ export const mockQuestions: Question[] = [
     },
     {
         id_question: 4,
-        id_subject: 's3',
         id_lesson: 'l3',
         question_name: "What does the idiom 'break the ice' mean?",
         answer_1: 'To freeze something',
@@ -95,7 +91,6 @@ export const mockQuestions: Question[] = [
     },
     {
         id_question: 5,
-        id_subject: 's3',
         id_lesson: 'l3',
         question_name: "Choose the correct preposition: She is interested ___ learning new languages.",
         answer_1: 'at',
@@ -109,7 +104,6 @@ export const mockQuestions: Question[] = [
     },
     {
         id_question: 6,
-        id_subject: 's3',
         id_lesson: 'l4',
         question_name: "What is the opposite of 'urbanisation'?",
         answer_1: 'Industrialisation',
@@ -123,7 +117,6 @@ export const mockQuestions: Question[] = [
     },
     {
         id_question: 7,
-        id_subject: 's3',
         id_lesson: 'l4',
         question_name: "Which word is a verb?",
         answer_1: 'Development',
@@ -137,7 +130,6 @@ export const mockQuestions: Question[] = [
     },
     {
         id_question: 8,
-        id_subject: 's3',
         id_lesson: 'l4',
         question_name: "Complete the sentence: The city ___ a lot in the last decade.",
         answer_1: 'change',
@@ -151,7 +143,6 @@ export const mockQuestions: Question[] = [
     },
     {
         id_question: 9,
-        id_subject: 's3',
         id_lesson: 'l4',
         question_name: "What is a 'megacity'?",
         answer_1: 'A city with over 1 million people',
@@ -165,7 +156,6 @@ export const mockQuestions: Question[] = [
     },
     {
         id_question: 10,
-        id_subject: 's3',
         id_lesson: 'l4',
         question_name: "Which word means 'crowded and dirty living conditions'?",
         answer_1: 'Suburb',

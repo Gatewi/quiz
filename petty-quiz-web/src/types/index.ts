@@ -43,7 +43,6 @@ export interface Lesson {
 
 export interface Question {
     id_question: number;
-    id_subject: SubjectId;
     id_lesson: string;
     question_name: string;
     answer_1: string;

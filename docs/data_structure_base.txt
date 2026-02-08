@@ -31,7 +31,6 @@ Lưu ý, đây chỉ là các bảng dữ liệu chính. Các bảng phụ có t
 
 5. 'question': danh sách Câu hỏi
 - id_question: Mã môn học
-- id_subject: Mã môn học
 - question_name: Nội dung câu hỏi
 - answer_1: Đáp án 1
 - answer_2: Đáp án 2

@@ -50,7 +50,6 @@ erDiagram
 
     QUESTIONS {
         int4 id_question PK
-        string id_subject FK
         string id_lesson FK
         text question_name
         text answer_1

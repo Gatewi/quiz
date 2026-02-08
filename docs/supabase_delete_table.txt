@@ -1,8 +1,0 @@
-DROP TABLE IF EXISTS public.questions_answers CASCADE;
-DROP TABLE IF EXISTS public.session_answers CASCADE;
-DROP TABLE IF EXISTS public.quiz_sessions CASCADE;
-DROP TABLE IF EXISTS public.questions CASCADE;
-DROP TABLE IF EXISTS public.lessons CASCADE;
-DROP TABLE IF EXISTS public.subjects CASCADE;
-DROP TABLE IF EXISTS public.grades CASCADE;
-DROP TABLE IF EXISTS public.profiles CASCADE;

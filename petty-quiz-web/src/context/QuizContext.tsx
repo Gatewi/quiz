@@ -77,16 +77,36 @@ export const QuizProvider: React.FC<{ children: React.ReactNode }> = ({ children
         Object.entries(answers).forEach(([qId, selectedOption]) => {
             const q = questions.find(mq => mq.id_question.toString() === qId);
             if (q) {
-                const correctOptions = q.correst_ans.split(',').map(s => s.trim());
-                if (correctOptions.includes(selectedOption)) {
-                    correct++;
+                // Check if question has multiple correct answers
+                if (q.correst_ans.includes(',')) {
+                    // Multiple Choice Logic: EXACT MATCH of sorted arrays
+                    const correctOptions = q.correst_ans.split(',').map(s => s.trim()).sort();
+                    const userOptions = (selectedOption || '').split(',').map(s => s.trim()).sort();
+
+                    // Check if arrays are identical
+                    const isCorrect = correctOptions.length === userOptions.length &&
+                        correctOptions.every((value, index) => value === userOptions[index]);
+
+                    if (isCorrect) {
+                        correct++;
+                    } else {
+                        wrongAnswersList.push({
+                            question: q,
+                            selected_answer: selectedOption,
+                            correct_answer: q.correst_ans
+                        });
+                    }
                 } else {
-                    // Collect wrong answer details
-                    wrongAnswersList.push({
-                        question: q,
-                        selected_answer: selectedOption,
-                        correct_answer: q.correst_ans
-                    });
+                    // Single Choice Logic
+                    if (q.correst_ans === selectedOption) {
+                        correct++;
+                    } else {
+                        wrongAnswersList.push({
+                            question: q,
+                            selected_answer: selectedOption,
+                            correct_answer: q.correst_ans
+                        });
+                    }
                 }
             }
         });

@@ -9,6 +9,7 @@ const Login: React.FC = () => {
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [errorMsg, setErrorMsg] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
 
     const handleLogin = async () => {
         setErrorMsg('');
@@ -102,10 +103,16 @@ const Login: React.FC = () => {
                                 onChange={(e) => setPassword(e.target.value)}
                                 className="form-input flex w-full min-w-0 resize-none overflow-hidden rounded-lg text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-slate-600 bg-[#1a1d24] focus:border-primary h-14 placeholder:text-gray-500 p-[15px] pr-12 text-base font-normal leading-normal transition-all"
                                 placeholder="••••••••"
-                                type="password"
+                                type={showPassword ? "text" : "password"}
                             />
-                            <button className="absolute right-0 top-0 bottom-0 px-4 text-text-secondary hover:text-white transition-colors flex items-center justify-center focus:outline-none">
-                                <span className="material-symbols-outlined text-[24px]">visibility</span>
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute right-0 top-0 bottom-0 px-4 text-text-secondary hover:text-white transition-colors flex items-center justify-center focus:outline-none"
+                            >
+                                <span className="material-symbols-outlined text-[24px]">
+                                    {showPassword ? 'visibility' : 'visibility_off'}
+                                </span>
                             </button>
                         </div>
                         <div className="flex justify-end pt-2">

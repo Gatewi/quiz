@@ -15,7 +15,9 @@ const ExamInterface: React.FC = () => {
         decrementHints,
         finishQuiz,
         isFinished,
-        questions
+        questions,
+        grades,
+        subjects
     } = useQuiz();
 
     const [showHintModal, setShowHintModal] = useState(false);
@@ -36,6 +38,10 @@ const ExamInterface: React.FC = () => {
     if (!session || questions.length === 0) return null;
 
     const currentQ = questions[currentQuestionIndex];
+
+    const currentSubject = subjects.find(s => s.id_subject === session.quiz_settings.id_subject);
+    const currentGrade = grades.find(g => g.id_grade === session.quiz_settings.id_grade);
+    const contextLabel = `${currentSubject?.subject_name || session.quiz_settings.id_subject} - ${currentGrade?.grade_name || session.quiz_settings.id_grade}`;
 
     const formatTime = (seconds: number) => {
         const m = Math.floor(seconds / 60);
@@ -65,6 +71,23 @@ const ExamInterface: React.FC = () => {
     const optionIds = session.shuffled_options?.[currentQ.id_question] || ['1', '2', '3', '4'];
     const options = optionIds.map(id => ({ id, content: getAnswerContent(currentQ, id) }));
 
+    const isMultipleChoice = currentQ.correst_ans.includes(',');
+
+    const handleCheckboxChange = (optionId: string) => {
+        const currentAnswer = answers[currentQ.id_question] || '';
+        let selectedOptions = currentAnswer ? currentAnswer.split(',') : [];
+
+        if (selectedOptions.includes(optionId)) {
+            selectedOptions = selectedOptions.filter(id => id !== optionId);
+        } else {
+            selectedOptions.push(optionId);
+        }
+
+        // Sort to ensure consistent order (e.g. "1,2" vs "2,1")
+        const newAnswer = selectedOptions.sort().join(',');
+        submitAnswer(currentQ.id_question.toString(), newAnswer);
+    };
+
     return (
         <div className="bg-background-light dark:bg-background-dark min-h-screen text-slate-900 dark:text-white font-display flex flex-col overflow-x-hidden selection:bg-primary selection:text-white">
             {/* Hint Modal */}
@@ -88,21 +111,15 @@ const ExamInterface: React.FC = () => {
                 </div>
             )}
 
-            <div className="layout-container flex h-full grow flex-col w-full max-w-[1024px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
-                <header className="flex justify-end w-full mb-6">
-                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-dark border border-border-dark">
-                        <span className="material-symbols-outlined text-gray-400 text-lg">school</span>
-                        <span className="text-sm font-medium text-gray-300">
-                            {session.quiz_settings.id_subject.toUpperCase()} - {session.quiz_settings.id_grade.toUpperCase()}
-                        </span>
-                    </div>
-                </header>
+            <div className="layout-container flex h-full grow flex-col w-full max-w-[1024px] mx-auto px-4 sm:px-6 lg:px-8 py-4">
 
-                <main className="flex-1 flex flex-col gap-8">
-                    <section className="w-full bg-surface-dark/50 rounded-xl p-5 border border-border-dark backdrop-blur-sm">
+                <main className="flex-1 flex flex-col gap-4 mt-4">
+                    <section className="w-full bg-surface-dark/50 rounded-xl p-4 border border-border-dark backdrop-blur-sm">
                         <div className="flex flex-col gap-3">
                             <div className="flex justify-between items-end text-sm text-gray-400 mb-1">
-                                <span className="font-medium text-white">Tiến độ làm bài</span>
+                                <span className="font-medium text-white flex items-center gap-2">
+                                    Tiến độ làm bài <span className="text-text-secondary font-normal">- {contextLabel}</span>
+                                </span>
                                 <span className="font-bold text-primary text-base">{progress}%</span>
                                 <div className="flex items-center gap-1">
                                     <span className="material-symbols-outlined text-lg">timer</span>
@@ -117,35 +134,51 @@ const ExamInterface: React.FC = () => {
                         </div>
                     </section>
 
-                    <section className="flex flex-col gap-8 max-w-[800px] mx-auto w-full">
+                    <section className="flex flex-col gap-4 max-w-[800px] mx-auto w-full">
                         {currentQ ? (
                             <>
-                                <div className="flex flex-col gap-4">
-                                    <h2 className="text-primary text-lg font-bold tracking-wide uppercase opacity-90">
+                                <div className="flex flex-col gap-2">
+                                    <h2 className="text-primary text-base font-bold tracking-wide uppercase opacity-90">
                                         Câu hỏi số {currentQuestionIndex + 1}/{session.total_questions}:
                                     </h2>
-                                    <p className="text-white text-2xl sm:text-3xl font-medium leading-tight">
+                                    <p className="text-white text-xl sm:text-2xl font-medium leading-tight">
                                         {currentQ.question_name}
                                     </p>
                                 </div>
 
-                                <div className="radio-custom flex flex-col gap-4 mt-2">
-                                    {options.map((option) => (
-                                        <label key={option.id} className={`group relative flex items-center gap-4 rounded-xl border border-border-dark bg-surface-dark p-5 cursor-pointer transition-all hover:border-primary/50 hover:bg-surface-dark/80 ${answers[currentQ.id_question] === option.id ? 'border-primary bg-primary/10 ring-1 ring-primary' : ''}`}>
-                                            <div className="flex items-center justify-center shrink-0">
-                                                <input
-                                                    type="radio"
-                                                    name="quiz-option"
-                                                    className="peer h-5 w-5 border-2 border-gray-500 bg-transparent text-transparent checked:border-primary checked:bg-primary focus:ring-0 focus:ring-offset-0 transition-all"
-                                                    checked={answers[currentQ.id_question] === option.id}
-                                                    onChange={() => submitAnswer(currentQ.id_question.toString(), option.id)}
-                                                />
-                                            </div>
-                                            <div className="flex grow flex-col">
-                                                <span className="text-white text-lg font-normal leading-normal group-hover:text-white transition-colors">{option.content}</span>
-                                            </div>
-                                        </label>
-                                    ))}
+                                <div className="radio-custom flex flex-col gap-3 mt-2">
+                                    {options.map((option) => {
+                                        const isSelected = isMultipleChoice
+                                            ? (answers[currentQ.id_question] || '').split(',').includes(option.id)
+                                            : answers[currentQ.id_question] === option.id;
+
+                                        return (
+                                            <label key={option.id} className={`group relative flex items-center gap-3 rounded-xl border border-border-dark bg-surface-dark p-4 cursor-pointer transition-all hover:border-primary/50 hover:bg-surface-dark/80 ${isSelected ? 'border-primary bg-primary/10 ring-1 ring-primary' : ''}`}>
+                                                <div className="flex items-center justify-center shrink-0">
+                                                    {isMultipleChoice ? (
+                                                        <input
+                                                            type="checkbox"
+                                                            name={`quiz-option-${currentQ.id_question}`}
+                                                            className="peer h-5 w-5 border-2 border-gray-500 bg-transparent text-primary rounded focus:ring-0 focus:ring-offset-0 transition-all checked:border-primary checked:bg-primary"
+                                                            checked={isSelected}
+                                                            onChange={() => handleCheckboxChange(option.id)}
+                                                        />
+                                                    ) : (
+                                                        <input
+                                                            type="radio"
+                                                            name="quiz-option"
+                                                            className="peer h-5 w-5 border-2 border-gray-500 bg-transparent text-transparent checked:border-primary checked:bg-primary focus:ring-0 focus:ring-offset-0 transition-all"
+                                                            checked={isSelected}
+                                                            onChange={() => submitAnswer(currentQ.id_question.toString(), option.id)}
+                                                        />
+                                                    )}
+                                                </div>
+                                                <div className="flex grow flex-col">
+                                                    <span className="text-white text-base font-normal leading-normal group-hover:text-white transition-colors">{option.content}</span>
+                                                </div>
+                                            </label>
+                                        );
+                                    })}
                                 </div>
                             </>
                         ) : (
@@ -156,7 +189,7 @@ const ExamInterface: React.FC = () => {
                     </section>
                 </main>
 
-                <footer className="mt-12 py-6 border-t border-border-dark">
+                <footer className="mt-6 py-4 border-t border-border-dark">
                     <div className="max-w-[800px] mx-auto w-full grid grid-cols-3 items-center gap-4">
                         <div className="justify-self-start">
                             <button

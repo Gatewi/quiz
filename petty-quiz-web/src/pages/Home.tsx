@@ -177,9 +177,8 @@ const Home: React.FC = () => {
                         onChange={(e) => setSelectedQuantity(e.target.value)}
                     >
                         <option value="">Chọn số câu hỏi</option>
-                        <option value="10">10 câu</option>
-                        <option value="20">20 câu</option>
-                        <option value="50">50 câu</option>
+                        <option value="40">40 câu</option>
+                        <option value="70">70 câu</option>
                         <option value="100">100 câu</option>
                     </select>
                 </div>
